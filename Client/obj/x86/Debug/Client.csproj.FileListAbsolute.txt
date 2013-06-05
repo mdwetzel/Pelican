@@ -1,0 +1,11 @@
+H:\Dropbox\Visual Studio\Pelican\Client\bin\Debug\Client.exe
+H:\Dropbox\Visual Studio\Pelican\Client\bin\Debug\Client.pdb
+H:\Dropbox\Visual Studio\Pelican\Client\obj\x86\Debug\Client.Properties.Resources.resources
+H:\Dropbox\Visual Studio\Pelican\Client\obj\x86\Debug\Client.csproj.GenerateResource.Cache
+H:\Dropbox\Visual Studio\Pelican\Client\obj\x86\Debug\Client.exe
+H:\Dropbox\Visual Studio\Pelican\Client\obj\x86\Debug\Client.pdb
+H:\Dropbox\Visual Studio\Pelican\Client\bin\Debug\Data.dll
+H:\Dropbox\Visual Studio\Pelican\Client\bin\Debug\Data.pdb
+H:\Dropbox\Visual Studio\Pelican\Client\obj\x86\Debug\Client.csprojResolveAssemblyReference.cache
+H:\Dropbox\Visual Studio\Pelican\Client\obj\x86\Debug\Client.CreateRoom.resources
+H:\Dropbox\Visual Studio\Pelican\Client\obj\x86\Debug\Client.ClientForm.resources

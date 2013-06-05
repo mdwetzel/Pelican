@@ -1,0 +1,5 @@
+H:\Dropbox\Visual Studio\Pelican\Data\bin\Debug\Data.dll
+H:\Dropbox\Visual Studio\Pelican\Data\bin\Debug\Data.pdb
+H:\Dropbox\Visual Studio\Pelican\Data\obj\Debug\Data.dll
+H:\Dropbox\Visual Studio\Pelican\Data\obj\Debug\Data.pdb
+H:\Dropbox\Visual Studio\Pelican\Data\obj\Debug\Data.csprojResolveAssemblyReference.cache

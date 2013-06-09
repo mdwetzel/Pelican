@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Windows.Forms;
 using Data;
+using MS.Internal.Xml.XPath;
 
 namespace Server
 {
@@ -47,6 +48,8 @@ namespace Server
 
         private bool online;
 
+        public List<Ban> bans = new List<Ban>();
+
         public Server()
         {
             PacketReceived += Server_PacketReceived;
@@ -76,12 +79,20 @@ namespace Server
 
         public User GetUser(Socket socket)
         {
-            return users.First(user => user.Socket == socket);
+            try {
+                return users.First(user => user.Socket == socket);
+            } catch (InvalidOperationException) {
+                return null;
+            }
         }
 
         public User GetUser(Guid guid)
         {
-            return users.First(user => user.Guid == guid);
+            try {
+                return users.First(user => user.Guid == guid);
+            } catch (InvalidOperationException) {
+                return null;
+            }
         }
 
         public Room GetRoom(Guid guid)
@@ -126,9 +137,17 @@ namespace Server
             try {
                 StateObject state = new StateObject { workSocket = listenerSocket.EndAccept(ar) };
 
+                if (bans.Find(ban => (Equals(ban.IP, ((IPEndPoint)state.workSocket.RemoteEndPoint).Address))) != null) {
+
+                    SendPacket(state.workSocket, PacketHelper.Serialize(new Data.Packets.Server.BanNotificationPacket("You are banned.")));
+
+                    state.workSocket.Shutdown(SocketShutdown.Both);
+                } else {
+                    state.workSocket.BeginReceive(state.Buffer, 0, StateObject.InitialBufferSize, SocketFlags.None, OnReceive, state);
+                }
+
                 listenerSocket.BeginAccept(OnAccept, null);
 
-                state.workSocket.BeginReceive(state.Buffer, 0, StateObject.InitialBufferSize, SocketFlags.None, OnReceive, state);
             } catch (ObjectDisposedException) {
                 // We've stopped the server.
             }
@@ -157,12 +176,18 @@ namespace Server
 
                     state.workSocket.BeginReceive(state.Buffer, 0, state.Buffer.Length, SocketFlags.None, OnReceive, state);
                 } else {
-                    UserDisconnected(GetUser(state.workSocket).Guid);
+                    User user = GetUser(state.workSocket);
+                    if (user != null) {
+                        UserDisconnected(user.Guid);
+                    }
                 }
             } catch (SocketException ex) {
                 switch (ex.ErrorCode) {
                     case 10054:
-                        UserDisconnected(GetUser(state.workSocket).Guid);
+                        User user = GetUser(state.workSocket);
+                        if (user != null) {
+                            UserDisconnected(user.Guid);
+                        }
                         break;
                 }
             }

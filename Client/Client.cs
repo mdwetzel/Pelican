@@ -30,7 +30,7 @@ namespace Client
 
         public event ConnectionLostHandler ConnectionLost;
 
-        public delegate void ConnectionEstablishedHandler();
+        public delegate void ConnectionEstablishedHandler(StateObject state);
 
         public event ConnectionEstablishedHandler ConnectionEstablished;
 
@@ -42,13 +42,35 @@ namespace Client
 
         public event KickUserHandler KickUser;
 
+        public delegate void BanUserHandler(BanPacket packet);
+
+        public event BanUserHandler BanUser;
+
+        public delegate void BanNotificationHandler(BanNotificationPacket packet);
+
+        public event BanNotificationHandler BanNotification;
+
         public Client()
         {
             PacketReceived += Client_PacketReceived;
             UpdateUserGuid += Client_UpdateUserGuid;
             KickUser += Client_KickUser;
+            BanUser += Client_BanUser;
+            ConnectionEstablished += new ConnectionEstablishedHandler(Client_ConnectionEstablished);
 
             Connect();
+        }
+
+        void Client_ConnectionEstablished(StateObject state)
+        {
+
+            state.workSocket.BeginReceive(state.Buffer, 0, StateObject.InitialBufferSize, SocketFlags.None,
+                                          OnReceive, state);
+        }
+
+        void Client_BanUser(BanPacket packet)
+        {
+
         }
 
         public void Connect()
@@ -82,12 +104,15 @@ namespace Client
                 if (UpdateRooms != null) UpdateRooms(packet as Data.UpdateRoomsPacket);
             } else if (packet is KickPacket) {
                 if (KickUser != null) KickUser(packet as KickPacket);
+            } else if (packet is BanPacket) {
+                if (BanUser != null) BanUser(packet as BanPacket);
             } else if (packet is UpdateUserGuidPacket) {
                 if (UpdateUserGuid != null) UpdateUserGuid(packet as UpdateUserGuidPacket);
             } else if (packet is Data.Packets.Server.JoinRoomPacket) {
                 packet = packet as Data.Packets.Server.JoinRoomPacket;
+            } else if (packet is Data.Packets.Server.BanNotificationPacket) {
 
-
+                BanNotification(packet as Data.Packets.Server.BanNotificationPacket);
             }
         }
 
@@ -99,10 +124,8 @@ namespace Client
 
                 SendPacket(PacketHelper.Serialize(new LoginPacket(user.Username)));
 
-                if (ConnectionEstablished != null) ConnectionEstablished();
+                if (ConnectionEstablished != null) ConnectionEstablished(state);
 
-                state.workSocket.BeginReceive(state.Buffer, 0, StateObject.InitialBufferSize, SocketFlags.None,
-                                              OnReceive, state);
             } catch (SocketException ex) {
                 switch (ex.ErrorCode) {
                     case 10061:

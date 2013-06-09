@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using System.Windows.Forms;
 using Data;
 using Data.Packets;
+using Data.Packets.Server;
 
 namespace Server
 {
@@ -41,8 +42,6 @@ namespace Server
                 toolStripDropDownButton1.Image = new Bitmap(@"Images/offline.png");
                 startServerToolStripMenuItem.Enabled = true;
                 stopServerToolStripMenuItem.Enabled = false;
-
-
             }));
         }
 
@@ -61,10 +60,10 @@ namespace Server
         void server_UserDisconnected(Guid guid)
         {
             Invoke(new MethodInvoker(delegate
-                {
-                    listView1.Items.RemoveByKey(guid.ToString());
-                    toolStripStatusLabel3.Text = string.Format("{0} users online", server.users.Count);
-                }));
+            {
+                listView1.Items.RemoveByKey(guid.ToString());
+                toolStripStatusLabel3.Text = string.Format("{0} users online", server.users.Count);
+            }));
 
         }
 
@@ -89,7 +88,7 @@ namespace Server
 
                     listView1.Items.RemoveByKey(user.Guid.ToString());
 
-                    server.SendPacket(user.Socket, PacketHelper.Serialize(new KickPacket(user.Guid)));
+                    server.SendPacket(user.Socket, PacketHelper.Serialize(new KickPacket(user.Guid, "You have been kicked.")));
 
                     server.users.Remove(user);
                     user.Socket.Shutdown(SocketShutdown.Both);
@@ -101,7 +100,24 @@ namespace Server
 
         private void banUserToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            Invoke(new MethodInvoker(delegate
+            {
+                if (listView1.SelectedItems.Count > 0) {
 
+                    User user = server.GetUser(Guid.Parse(listView1.SelectedItems[0].Name));
+
+                    listView1.Items.RemoveByKey(user.Guid.ToString());
+
+                    server.SendPacket(user.Socket, PacketHelper.Serialize(new BanPacket(user.Guid, "You have been banned.")));
+
+                    server.bans.Add(new Ban { IP = (((IPEndPoint)user.Socket.RemoteEndPoint).Address) });
+
+                    server.users.Remove(user);
+                    user.Socket.Shutdown(SocketShutdown.Both);
+
+                    toolStripStatusLabel3.Text = string.Format("{0} users online", server.users.Count);
+                }
+            }));
         }
 
         private void stopServerToolStripMenuItem_Click(object sender, EventArgs e)

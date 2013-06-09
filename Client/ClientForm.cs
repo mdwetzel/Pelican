@@ -2,6 +2,8 @@
 using System.Windows.Forms;
 using Data;
 using Data.Packets;
+using Data.Packets.Server;
+using JoinRoomPacket = Data.JoinRoomPacket;
 
 namespace Client
 {
@@ -19,19 +21,45 @@ namespace Client
             client.UpdateRooms += client_UpdateRooms;
             client.ConnectionLost += client_ConnectionLost;
             client.KickUser += client_KickUser;
+            client.BanUser += client_BanUser;
 
             client.ConnectionEstablished += client_ConnectionEstablished;
+            client.BanNotification += new Client.BanNotificationHandler(client_BanNotification);
 
+        }
+
+        void client_BanNotification(BanNotificationPacket packet)
+        {
+            WriteToLog(packet.Message);
+        }
+
+        private void WriteToLog(string message)
+        {
+            Invoke(new MethodInvoker(delegate
+            {
+
+                rchTxtLog.Text += string.Format("[{0}] {1}", DateTime.Now.ToString("T"), message);
+                rchTxtLog.Text += "\r\n";
+                rchTxtLog.Select(rchTxtLog.Text.Length, 1);
+                rchTxtLog.ScrollToCaret();
+            }));
+        }
+
+        void client_BanUser(BanPacket packet)
+        {
+            if (packet.Guid == client.User.Guid) {
+                WriteToLog(packet.Message);
+            }
         }
 
         void client_KickUser(KickPacket packet)
         {
             if (packet.UserGuid == client.User.Guid) {
-                Invoke(new MethodInvoker(() => MessageBox.Show("You have been kicked.")));
+                WriteToLog(packet.Message);
             }
         }
 
-        void client_ConnectionEstablished()
+        void client_ConnectionEstablished(StateObject state)
         {
             Invoke(new MethodInvoker(delegate
             {
@@ -40,6 +68,10 @@ namespace Client
 
                 Text = "Pelican";
                 tabControl1.SelectedTab = tabPageRooms;
+
+                WriteToLog("Connected to server!");
+
+
             }));
         }
 
@@ -55,9 +87,7 @@ namespace Client
 
                 client.User.Socket = null;
 
-                if (MessageBox.Show("Reconnect?", "Reconnect?", MessageBoxButtons.YesNo) == DialogResult.Yes) {
-                    client.Connect();
-                }
+                WriteToLog("Lost connection to server.");
             }));
         }
 
@@ -116,6 +146,8 @@ namespace Client
 
                 Text = "Pelican - Disconnected";
                 tabControl1.SelectedTab = tabPageRooms;
+
+                WriteToLog("Lost connection to server.");
             }));
         }
 
@@ -130,6 +162,5 @@ namespace Client
             disconnectToolStripMenuItem.Enabled = false;
             connectToolStripMenuItem.Enabled = true;
         }
-
     }
 }

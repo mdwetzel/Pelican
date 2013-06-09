@@ -1,30 +1,29 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace Data.Packets
+namespace Data.Packets.Server
 {
     [Serializable]
-    public class KickPacket : Packet
+    public class BanPacket : Packet
     {
-        public Guid UserGuid { get; set; }
+        public Guid Guid { get; set; }
         public string Message { get; set; }
 
-        public KickPacket(Guid userGuid, string message)
+        public BanPacket(Guid guid, string message)
         {
-            UserGuid = userGuid;
+            Guid = guid;
             Message = message;
         }
 
-        public KickPacket(SerializationInfo info, StreamingContext context)
+        public BanPacket(SerializationInfo info, StreamingContext context)
         {
-            UserGuid = (Guid)info.GetValue("Guid", typeof(Guid));
+            Guid = (Guid)info.GetValue("Guid", typeof(Guid));
             Message = info.GetString("Message");
         }
 
-
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            info.AddValue("Guid", UserGuid);
+            info.AddValue("Guid", Guid);
             info.AddValue("Message", Message);
         }
     }

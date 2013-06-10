@@ -53,9 +53,6 @@ namespace Server
 
         public event UserMessageHandler UserMessage;
 
-
-
-
         public event ServerOfflineHandler ServerOffline;
 
         private bool online;
@@ -137,18 +134,20 @@ namespace Server
             Room room = user.Room;
 
 
-            room.Users.Remove(user);
+            if (room != null) {
+                room.Users.Remove(user);
 
-            foreach (var userItem in room.Users) {
-                SendPacket(userItem.Socket,
-                           PacketHelper.Serialize(
-                               new UserLeftRoomPacket(
-                                   string.Format("<<< {0} has left {1} >>>", user.Username, user.Room.Name), user,
-                                   user.Room)));
+                foreach (var userItem in room.Users) {
+                    SendPacket(userItem.Socket,
+                               PacketHelper.Serialize(
+                                   new UserLeftRoomPacket(
+                                       string.Format("<<< {0} has left {1} >>>", user.Username, user.Room.Name), user,
+                                       user.Room)));
 
 
-                SendPacket(userItem.Socket, PacketHelper.Serialize(new RefreshUsersPacket(user.Room.Users)));
+                    SendPacket(userItem.Socket, PacketHelper.Serialize(new RefreshUsersPacket(user.Room.Users)));
 
+                }
             }
 
             users.Remove(user);

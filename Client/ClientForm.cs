@@ -13,13 +13,10 @@ namespace Client
     public partial class ClientForm : Form
     {
         #region Fields/Properties
-
         private readonly Client client;
-
         #endregion
 
         #region Constructors
-
         public ClientForm()
         {
             InitializeComponent();
@@ -38,11 +35,9 @@ namespace Client
             client.ConnectionEstablished += client_ConnectionEstablished;
             client.BanNotification += client_BanNotification;
         }
-
         #endregion
 
         #region Methods
-
         private void WriteToChatWindow(string message)
         {
             Invoke(
@@ -82,8 +77,7 @@ namespace Client
                 {
                     tabMain.SelectedTab = tab;
 
-                    if (tab == tabPageRoom)
-                    {
+                    if (tab == tabPageRoom) {
                         rchTxtInput.Select();
                     }
                 }));
@@ -96,22 +90,17 @@ namespace Client
 
         private void ToggleConnectButtons(bool connected)
         {
-            if (connected)
-            {
+            if (connected) {
                 disconnectToolStripMenuItem.Enabled = true;
                 connectToolStripMenuItem.Enabled = false;
-            }
-            else
-            {
+            } else {
                 disconnectToolStripMenuItem.Enabled = false;
                 connectToolStripMenuItem.Enabled = true;
             }
         }
-
         #endregion
 
         #region Client Event Handlers
-
         private void client_RoomMessage(RoomMessagePacket packet)
         {
             WriteToChatWindow(packet.Message);
@@ -123,8 +112,7 @@ namespace Client
 
             Invoke(new MethodInvoker(delegate
                 {
-                    foreach (var user in packet.Room.Users)
-                    {
+                    foreach (var user in packet.Room.Users) {
                         lstViewUsers.Items.Add(user.Username);
                     }
                 }));
@@ -151,8 +139,7 @@ namespace Client
                 {
                     lstViewUsers.Items.Clear();
 
-                    foreach (var user in packet.Users)
-                    {
+                    foreach (var user in packet.Users) {
                         lstViewUsers.Items.Add(user.Username);
                     }
                 }));
@@ -160,20 +147,16 @@ namespace Client
 
         private void client_BanUser(BanPacket packet)
         {
-            if (packet.Guid == client.User.Guid)
-            {
+            if (packet.Guid == client.User.Guid) {
                 WriteToLog(packet.Message);
             }
         }
 
         private void client_KickUser(KickPacket packet)
         {
-            if (packet.UserGuid == client.User.Guid)
-            {
+            if (packet.UserGuid == client.User.Guid) {
                 WriteToLog(packet.TargetMessage);
-            }
-            else
-            {
+            } else {
                 WriteToChatWindow(packet.RoomMessage);
             }
         }
@@ -211,9 +194,8 @@ namespace Client
             Invoke(new MethodInvoker(delegate
                 {
                     lstViewRooms.Items.Clear();
-                    foreach (var room in packet.Rooms)
-                    {
-                        var roomItem = new ListViewItem(room.Name) {Name = room.Guid.ToString()};
+                    foreach (var room in packet.Rooms) {
+                        var roomItem = new ListViewItem(room.Name) { Name = room.Guid.ToString() };
                         roomItem.SubItems.AddRange(new[]
                             {
                                 room.Description, room.Users.Count.ToString(CultureInfo.InvariantCulture),
@@ -223,11 +205,9 @@ namespace Client
                     }
                 }));
         }
-
         #endregion
 
         #region Form Event Handlers
-
         private void disconnectToolStripMenuItem_Click(object sender, EventArgs e)
         {
             client.Disconnect();
@@ -245,13 +225,11 @@ namespace Client
 
         private void fileToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
         {
-            if (client.User.Socket != null && client.User.Socket.Connected)
-            {
+            if (client.User.Socket != null && client.User.Socket.Connected) {
                 ToggleConnectButtons(true);
             }
 
-            if (client.User.Socket == null || !client.User.Socket.Connected)
-            {
+            if (client.User.Socket == null || !client.User.Socket.Connected) {
                 ToggleConnectButtons(false);
             }
         }
@@ -277,8 +255,7 @@ namespace Client
         // TODO
         private void createRoomToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            using (CreateRoom createRoom = new CreateRoom())
-            {
+            using (CreateRoom createRoom = new CreateRoom()) {
                 if (createRoom.ShowDialog() != DialogResult.OK) return;
 
                 client.CreateRoom(new NewRoom());
@@ -294,7 +271,18 @@ namespace Client
         {
             client.Connect();
         }
+        #endregion
 
+        #region Options Event Handlers
+        private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (OptionsForm options = new OptionsForm()) {
+                if (options.ShowDialog() != DialogResult.OK) return;
+
+                Options.IpAddress = options.IpAddress;
+                Options.Port = options.Port;
+            }
+        }
         #endregion
     }
 }

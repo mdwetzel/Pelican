@@ -270,7 +270,7 @@ namespace Client
             };
 
             sendState.workSocket = state.workSocket;
-            state.workSocket.BeginConnect(new IPEndPoint(IPAddress.Loopback, 1000), OnConnect, state);
+            state.workSocket.BeginConnect(new IPEndPoint(Options.IpAddress, Options.Port), OnConnect, state);
         }
         #endregion
     }

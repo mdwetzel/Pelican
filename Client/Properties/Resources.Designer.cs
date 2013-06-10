@@ -114,5 +114,14 @@ namespace Client.Properties {
                 return ResourceManager.GetString("NewLine", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The server is currently not responding. Please try again later..
+        /// </summary>
+        internal static string ServerNotResponding {
+            get {
+                return ResourceManager.GetString("ServerNotResponding", resourceCulture);
+            }
+        }
     }
 }

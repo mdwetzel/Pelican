@@ -136,4 +136,7 @@
     <value>
 </value>
   </data>
+  <data name="ServerNotResponding" xml:space="preserve">
+    <value>The server is currently not responding. Please try again later.</value>
+  </data>
 </root>

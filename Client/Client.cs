@@ -1,25 +1,26 @@
-﻿using System;
+﻿#region Using
+using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Windows.Forms;
+using Client.Properties;
 using Data;
 using Data.Packets;
 using Data.Packets.Client;
 using Data.Packets.Server;
-using ServerPackets = Data.Packets.Server;
+#endregion
 
 namespace Client
 {
     public class Client
     {
+        #region Fields/Properties
         private readonly StateObject sendState = new StateObject();
-        private readonly User user = new User("Test");
+        // This is you, the client user. 
+        public User User { get; private set; }
+        #endregion
 
-        public User User
-        {
-            get { return user; }
-        }
-
+        #region Delegates/Events
         public delegate void PacketReceivedHandler(StateObject state);
 
         public event PacketReceivedHandler PacketReceived;
@@ -52,7 +53,7 @@ namespace Client
 
         public event BanNotificationHandler BanNotification;
 
-        public delegate void JoinRoomHandler(ServerPackets.JoinRoomPacket packet);
+        public delegate void JoinRoomHandler(Data.Packets.Server.JoinRoomPacket packet);
 
         public event JoinRoomHandler JoinRoom;
 
@@ -71,94 +72,43 @@ namespace Client
         public delegate void UserLeftRoomHandler(UserLeftRoomPacket packet);
 
         public event UserLeftRoomHandler UserLeftRoom;
+        #endregion
 
+        #region Constructors
         public Client()
         {
+            User = new User("Test");
+
             PacketReceived += Client_PacketReceived;
             UpdateUserGuid += Client_UpdateUserGuid;
-            KickUser += Client_KickUser;
-            BanUser += Client_BanUser;
             ConnectionEstablished += Client_ConnectionEstablished;
-            RefreshUsers += Client_RefreshUsers;
-            UserLeftRoom += Client_UserLeftRoom;
             JoinRoom += Client_JoinRoom;
 
-            RoomMessage += Client_RoomMessage;
-
+            // Connect to the server on startup. 
             Connect();
         }
+        #endregion
 
-        void Client_JoinRoom(ServerPackets.JoinRoomPacket packet)
+        #region Client Event Handlers
+        private void Client_JoinRoom(Data.Packets.Server.JoinRoomPacket packet)
         {
             User.Room = packet.Room;
         }
 
-        void Client_UserLeftRoom(UserLeftRoomPacket packet)
+        // Begin receiving server data on successful connection.
+        private void Client_ConnectionEstablished(StateObject state)
         {
+            state.workSocket.BeginReceive(state.Buffer, 0, StateObject.InitialBufferSize, SocketFlags.None, OnReceive, state);
         }
 
-        void Client_RefreshUsers(RefreshUsersPacket packet)
+        // Needed because the only GUIDs we should use should be created on the server. 
+        private void Client_UpdateUserGuid(UpdateUserGuidPacket packet)
         {
-
+            User.Guid = packet.Guid;
         }
 
-        void Client_RoomMessage(RoomMessagePacket packet)
-        {
-        }
-
-        void Client_ConnectionEstablished(StateObject state)
-        {
-
-            state.workSocket.BeginReceive(state.Buffer, 0, StateObject.InitialBufferSize, SocketFlags.None,
-                                          OnReceive, state);
-        }
-
-        void Client_BanUser(BanPacket packet)
-        {
-
-        }
-
-        public void JoinServerRoom(Guid guid)
-        {
-            SendPacket(PacketHelper.Serialize(new Data.Packets.Client.JoinRoomPacket(guid)));
-        }
-
-        public void CreateRoom(NewRoom newRoom)
-        {
-            CreateRoomPacket packet = new CreateRoomPacket(newRoom.Name, newRoom.Description);
-
-            SendPacket(PacketHelper.Serialize(packet));
-        }
-
-        public void SendMessage(string message, Room room)
-        {
-            SendPacket(PacketHelper.Serialize(new MessagePacket(message, room)));
-        }
-
-        public void Connect()
-        {
-            if (user.Socket != null && user.Socket.Connected) return;
-
-            StateObject state = new StateObject
-            {
-                workSocket = user.Socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
-            };
-
-            sendState.workSocket = state.workSocket;
-            state.workSocket.BeginConnect(new IPEndPoint(IPAddress.Loopback, 1000), OnConnect, state);
-        }
-
-        void Client_KickUser(KickPacket packet)
-        {
-
-        }
-
-        void Client_UpdateUserGuid(UpdateUserGuidPacket packet)
-        {
-            user.Guid = packet.Guid;
-        }
-
-        void Client_PacketReceived(StateObject state)
+        // Handle each unique packet and hand them off to whomever subscribes to them. 
+        private void Client_PacketReceived(StateObject state)
         {
             Packet packet = PacketHelper.Deserialize(state.Buffer);
 
@@ -170,8 +120,8 @@ namespace Client
                 if (BanUser != null) BanUser(packet as BanPacket);
             } else if (packet is UpdateUserGuidPacket) {
                 if (UpdateUserGuid != null) UpdateUserGuid(packet as UpdateUserGuidPacket);
-            } else if (packet is ServerPackets.JoinRoomPacket) {
-                if (JoinRoom != null) JoinRoom(packet as ServerPackets.JoinRoomPacket);
+            } else if (packet is Data.Packets.Server.JoinRoomPacket) {
+                if (JoinRoom != null) JoinRoom(packet as Data.Packets.Server.JoinRoomPacket);
             } else if (packet is BanNotificationPacket) {
                 if (BanNotification != null) BanNotification(packet as BanNotificationPacket);
             } else if (packet is RoomMessagePacket) {
@@ -184,26 +134,9 @@ namespace Client
                 if (UserLeftRoom != null) UserLeftRoom(packet as UserLeftRoomPacket);
             }
         }
+        #endregion
 
-        private void OnConnect(IAsyncResult ar)
-        {
-            try {
-                StateObject state = (StateObject)ar.AsyncState;
-                state.workSocket.EndConnect(ar);
-
-                SendPacket(PacketHelper.Serialize(new LoginPacket(user.Username)));
-
-                if (ConnectionEstablished != null) ConnectionEstablished(state);
-
-            } catch (SocketException ex) {
-                switch (ex.ErrorCode) {
-                    case 10061:
-                        MessageBox.Show("The server is currently not responding. Please try again later.");
-                        break;
-                }
-            }
-        }
-
+        #region Asynchronous Methods
         private void OnReceive(IAsyncResult ar)
         {
             try {
@@ -211,29 +144,35 @@ namespace Client
                 int bytesReceived = state.workSocket.EndReceive(ar);
 
                 if (bytesReceived > 0) {
+                    // The upcoming packet's size. This is what we set the buffer size to. 
                     if (bytesReceived == sizeof(int)) {
                         state.Length = BitConverter.ToInt32(state.Buffer, 0);
                         state.Buffer = new byte[state.Length];
                     } else {
+                        // If it's the actual packet data then simply read how many bytes we've received so far.
                         state.BytesReceived += bytesReceived;
                     }
 
+                    // If we have a complete packet then process it. 
                     if (state.BytesReceived == state.Length) {
                         PacketReceived(state);
 
-                        state.Buffer = new byte[StateObject.InitialBufferSize];
-                        state.BytesReceived = 0;
+                        // Reset the state's...state.
+                        state.Reset();
                     }
 
+                    // If data's being received (bytesReceived != 0) then continue reading. 
                     state.workSocket.BeginReceive(state.Buffer, 0, state.Buffer.Length, SocketFlags.None, OnReceive, state);
                 } else {
-                    // Lost connection to the server.
+                    // If bytesReceived == 0, then we've lost connection to the server.
+                    // This is most likely a socket shutdown. 
                     if (ConnectionLost != null) ConnectionLost();
                 }
             } catch (SocketException ex) {
                 switch (ex.ErrorCode) {
                     case 10054:
                         // Lost connection to server.
+                        // This is probably the server-side form being closed. 
                         if (ConnectionLost != null) ConnectionLost();
                         break;
                 }
@@ -246,6 +185,33 @@ namespace Client
             state.workSocket.EndSend(ar);
         }
 
+        private void OnConnect(IAsyncResult ar)
+        {
+            try {
+                StateObject state = (StateObject)ar.AsyncState;
+                state.workSocket.EndConnect(ar);
+
+                // We're connected, but we need to send our username to the server. 
+                SendPacket(PacketHelper.Serialize(new LoginPacket(User.Username)));
+
+                if (ConnectionEstablished != null) ConnectionEstablished(state);
+
+            } catch (SocketException ex) {
+                switch (ex.ErrorCode) {
+                    // This is most likely that the server's closed or simply not listening for new connections. 
+                    case 10061:
+                        MessageBox.Show(Resources.ServerNotResponding);
+                        break;
+                }
+            }
+        }
+        #endregion
+
+        #region Methods
+        /// <summary>
+        /// Sends a data packet to the server. 
+        /// </summary>
+        /// <param name="buffer"></param>
         private void SendPacket(byte[] buffer)
         {
             byte[] lengthPacket = BitConverter.GetBytes(buffer.Length);
@@ -253,9 +219,59 @@ namespace Client
             sendState.workSocket.BeginSend(buffer, 0, buffer.Length, SocketFlags.None, OnSend, sendState);
         }
 
-        internal void Disconnect()
+        /// <summary>
+        /// Disconnects the client from the server. 
+        /// </summary>
+        public void Disconnect()
         {
-            user.Socket.Shutdown(SocketShutdown.Both);
+            User.Socket.Shutdown(SocketShutdown.Both);
         }
+
+        /// <summary>
+        /// Joins the server's specified chat room.
+        /// </summary>
+        /// <param name="guid">The GUID of the room to join.</param>
+        public void JoinServerRoom(Guid guid)
+        {
+            SendPacket(PacketHelper.Serialize(new Data.Packets.Client.JoinRoomPacket(guid)));
+        }
+
+        /// <summary>
+        /// Creates a new chat room on the server.
+        /// </summary>
+        /// <param name="newRoom">The new room to create.</param>
+        public void CreateRoom(NewRoom newRoom)
+        {
+            CreateRoomPacket packet = new CreateRoomPacket(newRoom.Name, newRoom.Description);
+
+            SendPacket(PacketHelper.Serialize(packet));
+        }
+
+        /// <summary>
+        /// Sends a text message to the server's specified chat room.
+        /// </summary>
+        /// <param name="message">The message to send.</param>
+        /// <param name="room">The room to send the message to.</param>
+        public void SendMessage(string message, Room room)
+        {
+            SendPacket(PacketHelper.Serialize(new MessagePacket(message, room)));
+        }
+
+        /// <summary>
+        /// Connects to the remote server.
+        /// </summary>
+        public void Connect()
+        {
+            if (User.Socket != null && User.Socket.Connected) return;
+
+            StateObject state = new StateObject
+            {
+                workSocket = User.Socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
+            };
+
+            sendState.workSocket = state.workSocket;
+            state.workSocket.BeginConnect(new IPEndPoint(IPAddress.Loopback, 1000), OnConnect, state);
+        }
+        #endregion
     }
 }

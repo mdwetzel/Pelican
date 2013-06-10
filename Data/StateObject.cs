@@ -17,5 +17,14 @@ namespace Data
         public int BytesReceived { get; set; }
 
         public byte[] Buffer = new byte[InitialBufferSize];
+
+        /// <summary>
+        /// Resets the Buffer and BytesReceived to allow for a fresh packet read.
+        /// </summary>
+        public void Reset()
+        {
+            Buffer = new byte[StateObject.InitialBufferSize];
+            BytesReceived = 0;
+        }
     }
 }

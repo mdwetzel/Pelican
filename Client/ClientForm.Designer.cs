@@ -30,7 +30,7 @@
             this.components = new System.ComponentModel.Container();
             this.rchTxtChat = new System.Windows.Forms.RichTextBox();
             this.lstViewUsers = new System.Windows.Forms.ListView();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabMain = new System.Windows.Forms.TabControl();
             this.tabPageRooms = new System.Windows.Forms.TabPage();
             this.rchTxtLog = new System.Windows.Forms.RichTextBox();
             this.lstViewRooms = new System.Windows.Forms.ListView();
@@ -48,7 +48,7 @@
             this.connectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.disconnectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.tabControl1.SuspendLayout();
+            this.tabMain.SuspendLayout();
             this.tabPageRooms.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
             this.tabPageRoom.SuspendLayout();
@@ -79,15 +79,15 @@
             this.lstViewUsers.UseCompatibleStateImageBehavior = false;
             this.lstViewUsers.View = System.Windows.Forms.View.Details;
             // 
-            // tabControl1
+            // tabMain
             // 
-            this.tabControl1.Controls.Add(this.tabPageRooms);
-            this.tabControl1.Controls.Add(this.tabPageRoom);
-            this.tabControl1.Location = new System.Drawing.Point(0, 26);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(904, 531);
-            this.tabControl1.TabIndex = 4;
+            this.tabMain.Controls.Add(this.tabPageRooms);
+            this.tabMain.Controls.Add(this.tabPageRoom);
+            this.tabMain.Location = new System.Drawing.Point(0, 26);
+            this.tabMain.Name = "tabMain";
+            this.tabMain.SelectedIndex = 0;
+            this.tabMain.Size = new System.Drawing.Size(904, 531);
+            this.tabMain.TabIndex = 4;
             // 
             // tabPageRooms
             // 
@@ -192,7 +192,6 @@
             this.rchTxtInput.Size = new System.Drawing.Size(745, 24);
             this.rchTxtInput.TabIndex = 4;
             this.rchTxtInput.Text = "";
-            this.rchTxtInput.TextChanged += new System.EventHandler(this.rchTxtInput_TextChanged);
             this.rchTxtInput.KeyDown += new System.Windows.Forms.KeyEventHandler(this.rchTxtInput_KeyDown);
             // 
             // menuStrip1
@@ -241,11 +240,11 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(904, 558);
             this.Controls.Add(this.menuStrip1);
-            this.Controls.Add(this.tabControl1);
+            this.Controls.Add(this.tabMain);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "ClientForm";
             this.Text = "Client";
-            this.tabControl1.ResumeLayout(false);
+            this.tabMain.ResumeLayout(false);
             this.tabPageRooms.ResumeLayout(false);
             this.contextMenuStrip1.ResumeLayout(false);
             this.tabPageRoom.ResumeLayout(false);
@@ -260,7 +259,7 @@
 
         private System.Windows.Forms.RichTextBox rchTxtChat;
         private System.Windows.Forms.ListView lstViewUsers;
-        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabControl tabMain;
         private System.Windows.Forms.TabPage tabPageRooms;
         private System.Windows.Forms.TabPage tabPageRoom;
         private System.Windows.Forms.ListView lstViewRooms;

@@ -12,9 +12,8 @@ namespace Client
 {
     public class Client
     {
-        readonly StateObject sendState = new StateObject();
+        private readonly StateObject sendState = new StateObject();
         private readonly User user = new User("Test");
-        public Room room = null;
 
         public User User
         {
@@ -81,11 +80,17 @@ namespace Client
             BanUser += Client_BanUser;
             ConnectionEstablished += Client_ConnectionEstablished;
             RefreshUsers += Client_RefreshUsers;
-            UserLeftRoom += new UserLeftRoomHandler(Client_UserLeftRoom);
+            UserLeftRoom += Client_UserLeftRoom;
+            JoinRoom += Client_JoinRoom;
 
             RoomMessage += Client_RoomMessage;
 
             Connect();
+        }
+
+        void Client_JoinRoom(ServerPackets.JoinRoomPacket packet)
+        {
+            User.Room = packet.Room;
         }
 
         void Client_UserLeftRoom(UserLeftRoomPacket packet)
@@ -111,6 +116,23 @@ namespace Client
         void Client_BanUser(BanPacket packet)
         {
 
+        }
+
+        public void JoinServerRoom(Guid guid)
+        {
+            SendPacket(PacketHelper.Serialize(new Data.Packets.Client.JoinRoomPacket(guid)));
+        }
+
+        public void CreateRoom(NewRoom newRoom)
+        {
+            CreateRoomPacket packet = new CreateRoomPacket(newRoom.Name, newRoom.Description);
+
+            SendPacket(PacketHelper.Serialize(packet));
+        }
+
+        public void SendMessage(string message, Room room)
+        {
+            SendPacket(PacketHelper.Serialize(new MessagePacket(message, room)));
         }
 
         public void Connect()
@@ -224,7 +246,7 @@ namespace Client
             state.workSocket.EndSend(ar);
         }
 
-        public void SendPacket(byte[] buffer)
+        private void SendPacket(byte[] buffer)
         {
             byte[] lengthPacket = BitConverter.GetBytes(buffer.Length);
             sendState.workSocket.Send(lengthPacket);

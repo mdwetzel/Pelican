@@ -3,15 +3,13 @@
 namespace Data.Packets.Server
 {
     [Serializable]
-    public class BanPacket : Packet
+    public class UpdateUserGuidPacket : Packet
     {
         public Guid Guid { get; set; }
-        public string Message { get; set; }
 
-        public BanPacket(Guid guid, string message)
+        public UpdateUserGuidPacket(Guid guid)
         {
             Guid = guid;
-            Message = message;
         }
     }
 }

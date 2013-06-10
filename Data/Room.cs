@@ -6,7 +6,7 @@ namespace Data
     [Serializable]
     public class Room
     {
-        [NonSerialized]
+
         private List<User> users = new List<User>();
         public List<User> Users
         {
@@ -19,9 +19,9 @@ namespace Data
         public bool Private { get; set; }
         public Guid Guid { get; set; }
 
+
         public Room()
         {
-            Users = new List<User>();
             Guid = Guid.NewGuid();
         }
     }

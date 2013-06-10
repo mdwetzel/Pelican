@@ -6,7 +6,12 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Windows.Forms;
 using Data;
+using Data.Packets;
+using Data.Packets.Server;
 using MS.Internal.Xml.XPath;
+using JoinRoomPacket = Data.Packets.Client.JoinRoomPacket;
+using ServerPackets = Data.Packets.Server;
+using ClientPackets = Data.Packets.Client;
 
 namespace Server
 {
@@ -16,9 +21,9 @@ namespace Server
 
         public delegate void PacketReceivedHandler(StateObject state);
 
-        public delegate void UserLoginHandler(LoginPacket packet, Socket socket);
+        public delegate void UserLoginHandler(ClientPackets.LoginPacket packet, Socket socket);
 
-        public delegate void CreateRoomHandler(CreateRoomPacket packet);
+        public delegate void CreateRoomHandler(ClientPackets.CreateRoomPacket packet);
 
         public event CreateRoomHandler CreateRoom;
 
@@ -44,6 +49,13 @@ namespace Server
 
         public delegate void ServerOfflineHandler();
 
+        public delegate void UserMessageHandler(ClientPackets.MessagePacket packet, Socket socket);
+
+        public event UserMessageHandler UserMessage;
+
+
+
+
         public event ServerOfflineHandler ServerOffline;
 
         private bool online;
@@ -57,9 +69,20 @@ namespace Server
             CreateRoom += Server_CreateRoom;
             UserDisconnected += Server_UserDisconnected;
             UserJoinRoom += Server_UserJoinRoom;
-
+            UserMessage += new UserMessageHandler(Server_UserMessage);
 
             rooms.Add(new Room { Name = "Markapolis", Description = "This is awesome.", Private = true });
+        }
+
+        void Server_UserMessage(ClientPackets.MessagePacket packet, Socket socket)
+        {
+            Room room = GetRoom(GetUser(socket).Room.Guid);
+
+            User from = GetUser(socket);
+
+            foreach (var user in room.Users) {
+                SendPacket(user.Socket, PacketHelper.Serialize(new RoomMessagePacket(string.Format("{0}: {1}", from.Username, packet.Message))));
+            }
         }
 
         void Server_UserJoinRoom(JoinRoomPacket packet, Socket socket)
@@ -70,11 +93,19 @@ namespace Server
 
             if (!room.Users.Contains(user)) {
                 room.Users.Add(user);
+
+                user.Room = room;
+
+                SendPacket(socket, PacketHelper.Serialize(new Data.Packets.Server.JoinRoomPacket(true, room)));
+
+
+                foreach (var userItem in user.Room.Users) {
+                    SendPacket(userItem.Socket, PacketHelper.Serialize(new RefreshUsersPacket(room.Users)));
+                    SendPacket(userItem.Socket, PacketHelper.Serialize(new UserJoinedRoomPacket(string.Format("<<< {0} has joined {1} >>>", user.Username, room.Name), user, room)));
+                }
+
+                SendPacket(socket, PacketHelper.Serialize(new UpdateRoomsPacket(rooms)));
             }
-
-            SendPacket(socket, PacketHelper.Serialize(new Data.Packets.Server.JoinRoomPacket(true)));
-
-            SendPacket(socket, PacketHelper.Serialize(new UpdateRoomsPacket(rooms)));
         }
 
         public User GetUser(Socket socket)
@@ -102,15 +133,35 @@ namespace Server
 
         void Server_UserDisconnected(Guid guid)
         {
-            users.Remove(GetUser(guid));
+            User user = GetUser(guid);
+            Room room = user.Room;
+
+
+            room.Users.Remove(user);
+
+            foreach (var userItem in room.Users) {
+                SendPacket(userItem.Socket,
+                           PacketHelper.Serialize(
+                               new UserLeftRoomPacket(
+                                   string.Format("<<< {0} has left {1} >>>", user.Username, user.Room.Name), user,
+                                   user.Room)));
+
+
+                SendPacket(userItem.Socket, PacketHelper.Serialize(new RefreshUsersPacket(user.Room.Users)));
+
+            }
+
+            users.Remove(user);
+
+
         }
 
-        void Server_CreateRoom(CreateRoomPacket packet)
+        void Server_CreateRoom(ClientPackets.CreateRoomPacket packet)
         {
             MessageBox.Show("Test");
         }
 
-        private void Server_UserLogin(LoginPacket packet, Socket socket)
+        private void Server_UserLogin(ClientPackets.LoginPacket packet, Socket socket)
         {
             User newUser = new User(packet.Username) { Socket = socket };
             users.Add(newUser);
@@ -123,12 +174,14 @@ namespace Server
         {
             Packet packet = PacketHelper.Deserialize(state.Buffer);
 
-            if (packet is LoginPacket) {
-                UserLogin(packet as LoginPacket, state.workSocket);
-            } else if (packet is CreateRoomPacket) {
-                CreateRoom(packet as CreateRoomPacket);
+            if (packet is ClientPackets.LoginPacket) {
+                if (UserLogin != null) UserLogin(packet as ClientPackets.LoginPacket, state.workSocket);
+            } else if (packet is ClientPackets.CreateRoomPacket) {
+                if (CreateRoom != null) CreateRoom(packet as ClientPackets.CreateRoomPacket);
             } else if (packet is JoinRoomPacket) {
-                UserJoinRoom(packet as JoinRoomPacket, state.workSocket);
+                if (UserJoinRoom != null) UserJoinRoom(packet as JoinRoomPacket, state.workSocket);
+            } else if (packet is ClientPackets.MessagePacket) {
+                if (UserMessage != null) UserMessage(packet as ClientPackets.MessagePacket, state.workSocket);
             }
         }
 
@@ -193,6 +246,17 @@ namespace Server
             }
         }
 
+        public void SendPacket(Room room, byte[] buffer)
+        {
+            byte[] lengthPacket = BitConverter.GetBytes(buffer.Length);
+
+            foreach (var user in room.Users) {
+                user.Socket.Send(lengthPacket);
+                user.Socket.BeginSend(buffer, 0, buffer.Length, SocketFlags.None, OnSend, user.Socket);
+            }
+
+        }
+
         public void SendPacket(Socket socket, byte[] buffer)
         {
 
@@ -219,6 +283,10 @@ namespace Server
             // Disconnect all of the current users. 
             foreach (var user in users) {
                 user.Socket.Shutdown(SocketShutdown.Both);
+            }
+
+            foreach (var room in rooms) {
+                room.Users.Clear();
             }
 
             if (ServerOffline != null) ServerOffline();

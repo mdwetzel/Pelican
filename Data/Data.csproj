@@ -40,20 +40,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Packets\CreateRoomPacket.cs" />
-    <Compile Include="Packets\JoinRoomPacket.cs" />
-    <Compile Include="Packets\KickPacket.cs" />
-    <Compile Include="Packets\LoginPacket.cs" />
+    <Compile Include="Packets\Client\CreateRoomPacket.cs" />
+    <Compile Include="Packets\Client\JoinRoomPacket.cs" />
+    <Compile Include="Packets\Server\KickPacket.cs" />
+    <Compile Include="Packets\Client\LoginPacket.cs" />
+    <Compile Include="Packets\Client\MessagePacket.cs" />
     <Compile Include="Packets\Packet.cs" />
-    <Compile Include="PacketHelper.cs" />
+    <Compile Include="Packets\PacketHelper.cs" />
     <Compile Include="Packets\Server\BanNotificationPacket.cs" />
     <Compile Include="Packets\Server\BanPacket.cs" />
     <Compile Include="Packets\Server\JoinRoomPacket.cs" />
+    <Compile Include="Packets\Server\RefreshUsersPacket.cs" />
+    <Compile Include="Packets\Server\RoomMessagePacket.cs" />
+    <Compile Include="Packets\Server\UserJoinedRoomPacket.cs" />
+    <Compile Include="Packets\Server\UserLeftRoomPacket.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Room.cs" />
     <Compile Include="StateObject.cs" />
-    <Compile Include="Packets\UpdateRoomsPacket.cs" />
-    <Compile Include="Packets\UpdateUserGuidPacket.cs" />
+    <Compile Include="Packets\Server\UpdateRoomsPacket.cs" />
+    <Compile Include="Packets\Server\UpdateUserGuidPacket.cs" />
     <Compile Include="User.cs" />
   </ItemGroup>
   <ItemGroup />

@@ -1,0 +1,19 @@
+﻿using System;
+
+namespace Data.Packets.Server
+{
+    [Serializable]
+    public class UserLeftRoomPacket : Packet
+    {
+        public string Message { get; set; }
+        public User User { get; set; }
+        public Room Room { get; set; }
+
+        public UserLeftRoomPacket(string message, User user, Room room)
+        {
+            Message = message;
+            User = user;
+            Room = room;
+        }
+    }
+}

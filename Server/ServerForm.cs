@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using System.Windows.Forms;
 using Data;
 using Data.Packets;
+using Data.Packets.Client;
 using Data.Packets.Server;
 
 namespace Server
@@ -88,10 +89,28 @@ namespace Server
 
                     listView1.Items.RemoveByKey(user.Guid.ToString());
 
-                    server.SendPacket(user.Socket, PacketHelper.Serialize(new KickPacket(user.Guid, "You have been kicked.")));
+                    if (user.Room == null) {
+                        server.SendPacket(user.Socket,
+                                          PacketHelper.Serialize(new KickPacket(user.Guid, "You have been kicked.",
+                                                                                string.Format(
+                                                                                    "<<< {0} has been kicked >>>",
+                                                                                    user.Username))));
+                    } else {
+                        server.SendPacket(user.Room,
+                  PacketHelper.Serialize(new KickPacket(user.Guid, "You have been kicked.",
+                                                        string.Format(
+                                                            "<<< {0} has been kicked from {1} >>>",
+                                                            user.Username, user.Room.Name))));
+                    }
 
                     server.users.Remove(user);
                     user.Socket.Shutdown(SocketShutdown.Both);
+
+                    if (user.Room != null) {
+                        user.Room.Users.Remove(user);
+
+                        server.SendPacket(user.Room, PacketHelper.Serialize(new RefreshUsersPacket(user.Room.Users)));
+                    }
 
                     toolStripStatusLabel3.Text = string.Format("{0} users online", server.users.Count);
                 }
@@ -114,6 +133,8 @@ namespace Server
 
                     server.users.Remove(user);
                     user.Socket.Shutdown(SocketShutdown.Both);
+
+                    user.Room.Users.Remove(user);
 
                     toolStripStatusLabel3.Text = string.Format("{0} users online", server.users.Count);
                 }

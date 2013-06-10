@@ -3,11 +3,11 @@
 namespace Data.Packets.Server
 {
     [Serializable]
-    public class BanNotificationPacket : Packet
+    public class RoomMessagePacket : Packet
     {
         public string Message { get; set; }
 
-        public BanNotificationPacket(string message)
+        public RoomMessagePacket(string message)
         {
             Message = message;
         }

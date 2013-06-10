@@ -7,6 +7,7 @@ using Data;
 using Data.Packets;
 using Data.Packets.Client;
 using Data.Packets.Server;
+using Server.Properties;
 
 namespace Server
 {
@@ -23,8 +24,9 @@ namespace Server
             server.UserLogin += server_UserLogin;
             server.UserDisconnected += server_UserDisconnected;
             server.ServerOnline += server_ServerOnline;
-            server.ServerOffline += new Server.ServerOfflineHandler(server_ServerOffline);
-            toolStripStatusLabel3.Alignment = ToolStripItemAlignment.Right;
+            server.ServerOffline += server_ServerOffline;
+            lblUsersOnline.Alignment = ToolStripItemAlignment.Right;
+            server.UserJoinRoom += server_UserJoinRoom;
 
             if (!IsHandleCreated) {
 
@@ -34,12 +36,20 @@ namespace Server
             }
         }
 
+        void server_UserJoinRoom(Data.Packets.Client.JoinRoomPacket packet, Socket socket)
+        {
+            User user = server.GetUser(socket);
+            Room room = server.GetRoom(packet.Guid);
+
+            Invoke(new MethodInvoker(() => lstViewUsers.Items[user.Guid.ToString()].SubItems[2].Text = room.Name));
+        }
+
         void server_ServerOffline()
         {
             Invoke(new MethodInvoker(delegate
             {
-                Text = "Pelican | Offline";
-                toolStripStatusLabel2.Text = "Offline";
+                Text = string.Format("{0} | {1}", Resources.BaseName, Resources.Offline);
+                toolStripStatusLabel2.Text = Resources.Offline;
                 toolStripDropDownButton1.Image = new Bitmap(@"Images/offline.png");
                 startServerToolStripMenuItem.Enabled = true;
                 stopServerToolStripMenuItem.Enabled = false;
@@ -50,8 +60,8 @@ namespace Server
         {
             Invoke(new MethodInvoker(delegate
             {
-                Text = "Pelican | Online";
-                toolStripStatusLabel2.Text = "Online";
+                Text = string.Format("{0} | {1}", Resources.BaseName, Resources.Online);
+                toolStripStatusLabel2.Text = Resources.Online;
                 toolStripDropDownButton1.Image = new Bitmap(@"Images/online.png");
                 startServerToolStripMenuItem.Enabled = false;
                 stopServerToolStripMenuItem.Enabled = true;
@@ -62,8 +72,8 @@ namespace Server
         {
             Invoke(new MethodInvoker(delegate
             {
-                listView1.Items.RemoveByKey(guid.ToString());
-                toolStripStatusLabel3.Text = string.Format("{0} users online", server.users.Count);
+                lstViewUsers.Items.RemoveByKey(guid.ToString());
+                lblUsersOnline.Text = string.Format("{0} users online", server.users.Count);
             }));
 
         }
@@ -73,9 +83,9 @@ namespace Server
             Invoke(new MethodInvoker(delegate
             {
                 var user = new ListViewItem(packet.Username) { Name = server.GetUser(socket).Guid.ToString() };
-                user.SubItems.AddRange(new[] { ((IPEndPoint)socket.RemoteEndPoint).Address.ToString() });
-                listView1.Items.Add(user);
-                toolStripStatusLabel3.Text = string.Format("{0} users online", server.users.Count);
+                user.SubItems.AddRange(new[] { ((IPEndPoint)socket.RemoteEndPoint).Address.ToString(), "Roomless" });
+                lstViewUsers.Items.Add(user);
+                lblUsersOnline.Text = string.Format("{0} users online", server.users.Count);
             }));
         }
 
@@ -83,11 +93,11 @@ namespace Server
         {
             Invoke(new MethodInvoker(delegate
             {
-                if (listView1.SelectedItems.Count > 0) {
+                if (lstViewUsers.SelectedItems.Count > 0) {
 
-                    User user = server.GetUser(Guid.Parse(listView1.SelectedItems[0].Name));
+                    User user = server.GetUser(Guid.Parse(lstViewUsers.SelectedItems[0].Name));
 
-                    listView1.Items.RemoveByKey(user.Guid.ToString());
+                    lstViewUsers.Items.RemoveByKey(user.Guid.ToString());
 
                     if (user.Room == null) {
                         server.SendPacket(user.Socket,
@@ -112,7 +122,7 @@ namespace Server
                         server.SendPacket(user.Room, PacketHelper.Serialize(new RefreshUsersPacket(user.Room.Users)));
                     }
 
-                    toolStripStatusLabel3.Text = string.Format("{0} users online", server.users.Count);
+                    lblUsersOnline.Text = string.Format("{0} users online", server.users.Count);
                 }
             }));
         }
@@ -121,11 +131,11 @@ namespace Server
         {
             Invoke(new MethodInvoker(delegate
             {
-                if (listView1.SelectedItems.Count > 0) {
+                if (lstViewUsers.SelectedItems.Count > 0) {
 
-                    User user = server.GetUser(Guid.Parse(listView1.SelectedItems[0].Name));
+                    User user = server.GetUser(Guid.Parse(lstViewUsers.SelectedItems[0].Name));
 
-                    listView1.Items.RemoveByKey(user.Guid.ToString());
+                    lstViewUsers.Items.RemoveByKey(user.Guid.ToString());
 
                     server.SendPacket(user.Socket, PacketHelper.Serialize(new BanPacket(user.Guid, "You have been banned.")));
 
@@ -136,14 +146,14 @@ namespace Server
 
                     user.Room.Users.Remove(user);
 
-                    toolStripStatusLabel3.Text = string.Format("{0} users online", server.users.Count);
+                    lblUsersOnline.Text = string.Format("{0} users online", server.users.Count);
                 }
             }));
         }
 
         private void stopServerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Invoke(new MethodInvoker(() => listView1.Items.Clear()));
+            Invoke(new MethodInvoker(() => lstViewUsers.Items.Clear()));
 
             server.Stop();
         }

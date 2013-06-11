@@ -10,3 +10,4 @@ H:\Dropbox\Visual Studio\Pelican\Client\obj\x86\Debug\Client.csprojResolveAssemb
 H:\Dropbox\Visual Studio\Pelican\Client\obj\x86\Debug\Client.CreateRoom.resources
 H:\Dropbox\Visual Studio\Pelican\Client\obj\x86\Debug\Client.ClientForm.resources
 H:\Dropbox\Visual Studio\Pelican\Client\obj\x86\Debug\Client.OptionsForm.resources
+H:\Dropbox\Visual Studio\Pelican\Client\bin\Debug\Client.exe.config

@@ -1,5 +1,7 @@
 ﻿#region Using
 using System.Net;
+using Client.Properties;
+
 #endregion
 
 namespace Client
@@ -15,8 +17,8 @@ namespace Client
         static Options()
         {
             // Defaults.
-            IpAddress = IPAddress.Loopback;
-            Port = 1000;
+            IpAddress = IPAddress.Parse(Settings.Default.IPAddress);
+            Port = int.Parse(Settings.Default.Port);
         }
         #endregion
     }

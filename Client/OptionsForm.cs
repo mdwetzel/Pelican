@@ -1,8 +1,11 @@
 ﻿#region Using
 using System;
+using System.Globalization;
 using System.Net;
 using System.Text;
-using System.Windows.Forms; 
+using System.Windows.Forms;
+using Client.Properties;
+
 #endregion
 
 namespace Client
@@ -28,7 +31,13 @@ namespace Client
         public OptionsForm()
         {
             InitializeComponent();
-        } 
+
+            ipAddress = IPAddress.Parse(Settings.Default.IPAddress);
+            port = int.Parse(Settings.Default.Port);
+
+            txtIpAddress.Text = ipAddress.ToString();
+            txtPort.Text = port.ToString(CultureInfo.InvariantCulture);
+        }
         #endregion
 
         #region Form Event Handlers
@@ -56,7 +65,7 @@ namespace Client
         private void btnCancel_Click(object sender, EventArgs e)
         {
             DialogResult = DialogResult.Cancel;
-        } 
+        }
         #endregion
     }
 }

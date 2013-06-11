@@ -77,7 +77,7 @@ namespace Client
         #region Constructors
         public Client()
         {
-            User = new User("Test");
+            User = new User(Settings.Default.Username);
 
             PacketReceived += Client_PacketReceived;
             UpdateUserGuid += Client_UpdateUserGuid;

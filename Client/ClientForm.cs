@@ -281,6 +281,11 @@ namespace Client
 
                 Options.IpAddress = options.IpAddress;
                 Options.Port = options.Port;
+
+                Settings.Default.IPAddress = options.IpAddress.ToString();
+                Settings.Default.Port = options.Port.ToString(CultureInfo.InvariantCulture);
+
+                Settings.Default.Save();
             }
         }
         #endregion

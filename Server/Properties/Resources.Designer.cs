@@ -61,11 +61,38 @@ namespace Server.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You have been banned from the server..
+        /// </summary>
+        internal static string BannedMessage {
+            get {
+                return ResourceManager.GetString("BannedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Pelican.
         /// </summary>
         internal static string BaseName {
             get {
                 return ResourceManager.GetString("BaseName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You have been kicked from the server..
+        /// </summary>
+        internal static string KickedMessage {
+            get {
+                return ResourceManager.GetString("KickedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;&lt;&lt; {0} has been kicked. &gt;&gt;&gt;.
+        /// </summary>
+        internal static string KickedUserMessage {
+            get {
+                return ResourceManager.GetString("KickedUserMessage", resourceCulture);
             }
         }
         

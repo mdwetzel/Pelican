@@ -8,6 +8,7 @@ using Data;
 using Data.Packets;
 using Data.Packets.Client;
 using Data.Packets.Server;
+using Server.Properties;
 using ServerPackets = Data.Packets.Server;
 using ClientPackets = Data.Packets.Client;
 #endregion
@@ -18,10 +19,10 @@ namespace Server
     {
         #region Fields/Properties
         private Socket listenerSocket;
-        public readonly List<Ban> bans = new List<Ban>();
+        private readonly List<Ban> bans = new List<Ban>();
         public readonly List<User> users = new List<User>();
         private readonly List<Room> rooms = new List<Room>();
-        private bool online;
+        public bool Online { get; private set; }
         #endregion
 
         #region Delegates/Events
@@ -222,9 +223,9 @@ namespace Server
         #region Methods
         internal void Stop()
         {
-            if (!online) return;
+            if (!Online) return;
 
-            online = false;
+            Online = false;
 
             // Stop listening for new connections. 
             listenerSocket.Close();
@@ -243,9 +244,9 @@ namespace Server
 
         internal void Start()
         {
-            if (online) return;
+            if (Online) return;
 
-            online = true;
+            Online = true;
 
             listenerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
@@ -257,14 +258,76 @@ namespace Server
             if (ServerOnline != null) ServerOnline();
         }
 
-        public void SendPacket(Socket socket, byte[] buffer)
+        private void DisconnectUser(User user)
+        {
+            users.Remove(user);
+            user.Socket.Shutdown(SocketShutdown.Both);
+        }
+
+        internal void DisconnectUser(Socket socket)
+        {
+            users.Remove(GetUser(socket));
+            socket.Shutdown(SocketShutdown.Both);
+        }
+
+        internal void DisconnectUser(Guid guid)
+        {
+            User user;
+            users.Remove(user = GetUser(guid));
+            user.Socket.Shutdown(SocketShutdown.Both);
+        }
+
+        /// <summary>
+        /// Bans a user from the server and removes him from the room he was in. 
+        /// </summary>
+        /// <param name="user">The User to remove from the server.</param>
+        internal void BanUser(User user)
+        {
+            SendPacket(user.Socket, PacketHelper.Serialize(new BanPacket(user.Guid, Resources.BannedMessage)));
+
+            bans.Add(new Ban { IP = (((IPEndPoint)user.Socket.RemoteEndPoint).Address) });
+
+            DisconnectUser(user);
+
+            RemoveUserFromRoom(user);
+        }
+
+        /// <summary>
+        /// Removes a user from the room and sends a RefreshUsersPacket to each remaining user in the room.
+        /// </summary>
+        /// <param name="user">The User to remove from the room.</param>
+        private void RemoveUserFromRoom(User user)
+        {
+            if (user.Room == null) return;
+            user.Room.Users.Remove(user);
+            SendPacket(user.Room, PacketHelper.Serialize(new RefreshUsersPacket(user.Room.Users)));
+        }
+
+        /// <summary>
+        /// Kicks a user from the server and removes him from the room he was in. 
+        /// </summary>
+        /// <param name="user">The User to kick from the server.</param>
+        public void KickUser(User user)
+        {
+            if (user.Room == null) {
+                SendPacket(user.Socket, PacketHelper.Serialize(new KickPacket(user.Guid, Resources.KickedMessage, null)));
+            } else {
+                SendPacket(user.Room, PacketHelper.Serialize(new KickPacket(user.Guid, Resources.KickedMessage, string.Format(Resources.KickedUserMessage, user.Username))));
+            }
+
+            DisconnectUser(user);
+
+            RemoveUserFromRoom(user);
+        }
+
+        private void SendPacket(Socket socket, byte[] buffer)
         {
             byte[] lengthPacket = BitConverter.GetBytes(buffer.Length);
             socket.Send(lengthPacket);
             socket.BeginSend(buffer, 0, buffer.Length, SocketFlags.None, OnSend, socket);
         }
 
-        public void SendPacket(Room room, byte[] buffer)
+        private void SendPacket(Room room, byte[] buffer)
         {
             byte[] lengthPacket = BitConverter.GetBytes(buffer.Length);
 
@@ -274,6 +337,11 @@ namespace Server
             }
         }
 
+        /// <summary>
+        /// Gets a user based on his socket.
+        /// </summary>
+        /// <param name="socket">The Socket of the User.</param>
+        /// <returns></returns>
         public User GetUser(Socket socket)
         {
             try {
@@ -283,6 +351,11 @@ namespace Server
             }
         }
 
+        /// <summary>
+        /// Gets a user based on his GUID.
+        /// </summary>
+        /// <param name="guid">The GUID of the User.</param>
+        /// <returns></returns>
         public User GetUser(Guid guid)
         {
             try {
@@ -292,6 +365,11 @@ namespace Server
             }
         }
 
+        /// <summary>
+        /// Gets a Room based on its GUID.
+        /// </summary>
+        /// <param name="guid">The GUID of the Room.</param>
+        /// <returns></returns>
         public Room GetRoom(Guid guid)
         {
             return rooms.First(room => room.Guid == guid);

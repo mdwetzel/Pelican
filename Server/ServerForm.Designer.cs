@@ -32,6 +32,7 @@
             this.lstViewUsers = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.kickUserToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.banUserToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -39,13 +40,12 @@
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
+            this.btnConnectionStatus = new System.Windows.Forms.ToolStripDropDownButton();
             this.stopServerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.startServerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel4 = new System.Windows.Forms.ToolStripStatusLabel();
             this.lblUsersOnline = new System.Windows.Forms.ToolStripStatusLabel();
-            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -73,6 +73,11 @@
             // columnHeader2
             // 
             this.columnHeader2.Text = "IP";
+            // 
+            // columnHeader3
+            // 
+            this.columnHeader3.Text = "Room";
+            this.columnHeader3.Width = 91;
             // 
             // contextMenuStrip1
             // 
@@ -116,7 +121,7 @@
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1,
-            this.toolStripDropDownButton1,
+            this.btnConnectionStatus,
             this.toolStripStatusLabel2,
             this.toolStripStatusLabel4,
             this.lblUsersOnline});
@@ -131,17 +136,18 @@
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
             this.toolStripStatusLabel1.Size = new System.Drawing.Size(0, 17);
             // 
-            // toolStripDropDownButton1
+            // btnConnectionStatus
             // 
-            this.toolStripDropDownButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.btnConnectionStatus.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnConnectionStatus.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.stopServerToolStripMenuItem,
             this.startServerToolStripMenuItem});
-            this.toolStripDropDownButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton1.Image")));
-            this.toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripDropDownButton1.Name = "toolStripDropDownButton1";
-            this.toolStripDropDownButton1.Size = new System.Drawing.Size(29, 20);
-            this.toolStripDropDownButton1.Text = "toolStripDropDownButton1";
+            this.btnConnectionStatus.Image = ((System.Drawing.Image)(resources.GetObject("btnConnectionStatus.Image")));
+            this.btnConnectionStatus.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnConnectionStatus.Name = "btnConnectionStatus";
+            this.btnConnectionStatus.Size = new System.Drawing.Size(29, 20);
+            this.btnConnectionStatus.Text = "btnConnectionStatus";
+            this.btnConnectionStatus.DropDownOpening += new System.EventHandler(this.btnConnectionStatus_DropDownOpening);
             // 
             // stopServerToolStripMenuItem
             // 
@@ -170,16 +176,10 @@
             // 
             // lblUsersOnline
             // 
-            this.lblUsersOnline.Name = "toolStripStatusLabel3";
-            this.lblUsersOnline.Size = new System.Drawing.Size(473, 17);
+            this.lblUsersOnline.Name = "lblUsersOnline";
+            this.lblUsersOnline.Size = new System.Drawing.Size(442, 17);
             this.lblUsersOnline.Spring = true;
             this.lblUsersOnline.Text = "0 Users Online";
-            this.lblUsersOnline.Click += new System.EventHandler(this.toolStripStatusLabel3_Click);
-            // 
-            // columnHeader3
-            // 
-            this.columnHeader3.Text = "Room";
-            this.columnHeader3.Width = 91;
             // 
             // ServerForm
             // 
@@ -214,7 +214,7 @@
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
-        private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
+        private System.Windows.Forms.ToolStripDropDownButton btnConnectionStatus;
         private System.Windows.Forms.ToolStripMenuItem stopServerToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem startServerToolStripMenuItem;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;

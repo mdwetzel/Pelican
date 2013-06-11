@@ -126,4 +126,13 @@
   <data name="BaseName" xml:space="preserve">
     <value>Pelican</value>
   </data>
+  <data name="BannedMessage" xml:space="preserve">
+    <value>You have been banned from the server.</value>
+  </data>
+  <data name="KickedMessage" xml:space="preserve">
+    <value>You have been kicked from the server.</value>
+  </data>
+  <data name="KickedUserMessage" xml:space="preserve">
+    <value>&lt;&lt;&lt; {0} has been kicked. &gt;&gt;&gt;</value>
+  </data>
 </root>

@@ -1,20 +1,23 @@
-﻿using System;
+﻿#region Using
+using System;
 using System.Drawing;
 using System.Net;
 using System.Net.Sockets;
 using System.Windows.Forms;
 using Data;
-using Data.Packets;
 using Data.Packets.Client;
-using Data.Packets.Server;
 using Server.Properties;
+#endregion
 
 namespace Server
 {
     public sealed partial class ServerForm : Form
     {
+        #region Fields/Properties
         private readonly Server server;
+        #endregion
 
+        #region Constructors
         public ServerForm()
         {
             InitializeComponent();
@@ -25,57 +28,80 @@ namespace Server
             server.UserDisconnected += server_UserDisconnected;
             server.ServerOnline += server_ServerOnline;
             server.ServerOffline += server_ServerOffline;
-            lblUsersOnline.Alignment = ToolStripItemAlignment.Right;
             server.UserJoinRoom += server_UserJoinRoom;
+            lblUsersOnline.Alignment = ToolStripItemAlignment.Right;
 
             if (!IsHandleCreated) {
-
                 CreateHandle();
-
                 server.Start();
             }
         }
+        #endregion
 
-        void server_UserJoinRoom(Data.Packets.Client.JoinRoomPacket packet, Socket socket)
+        #region Methods
+        private void ToggleConnectionButtons(bool connected)
+        {
+            Invoke(new MethodInvoker(delegate
+            {
+                if (connected) {
+                    startServerToolStripMenuItem.Enabled = true;
+                    stopServerToolStripMenuItem.Enabled = false;
+                } else {
+                    startServerToolStripMenuItem.Enabled = false;
+                    stopServerToolStripMenuItem.Enabled = true;
+                }
+            }));
+        }
+
+        private void UpdateUsersOnline(int count)
+        {
+            Invoke(new MethodInvoker(delegate
+            {
+                lblUsersOnline.Text = string.Format("{0} users online", count);
+            }));
+        }
+        #endregion
+
+        #region Server Event Handlers
+        private void server_UserJoinRoom(JoinRoomPacket packet, Socket socket)
         {
             User user = server.GetUser(socket);
             Room room = server.GetRoom(packet.Guid);
 
-            Invoke(new MethodInvoker(() => lstViewUsers.Items[user.Guid.ToString()].SubItems[2].Text = room.Name));
+            Invoke(new MethodInvoker(() => lstViewUsers.Items[user.Guid.ToString()].SubItems["Room"].Text = room.Name));
         }
 
-        void server_ServerOffline()
+        private void server_ServerOffline()
         {
             Invoke(new MethodInvoker(delegate
             {
                 Text = string.Format("{0} | {1}", Resources.BaseName, Resources.Offline);
                 toolStripStatusLabel2.Text = Resources.Offline;
-                toolStripDropDownButton1.Image = new Bitmap(@"Images/offline.png");
-                startServerToolStripMenuItem.Enabled = true;
-                stopServerToolStripMenuItem.Enabled = false;
+                btnConnectionStatus.Image = new Bitmap(@"Images/offline.png");
+
+                ToggleConnectionButtons(false);
             }));
         }
 
-        void server_ServerOnline()
+        private void server_ServerOnline()
         {
             Invoke(new MethodInvoker(delegate
             {
                 Text = string.Format("{0} | {1}", Resources.BaseName, Resources.Online);
                 toolStripStatusLabel2.Text = Resources.Online;
-                toolStripDropDownButton1.Image = new Bitmap(@"Images/online.png");
-                startServerToolStripMenuItem.Enabled = false;
-                stopServerToolStripMenuItem.Enabled = true;
+                btnConnectionStatus.Image = new Bitmap(@"Images/online.png");
+
+                ToggleConnectionButtons(true);
             }));
         }
 
-        void server_UserDisconnected(Guid guid)
+        private void server_UserDisconnected(Guid guid)
         {
             Invoke(new MethodInvoker(delegate
             {
                 lstViewUsers.Items.RemoveByKey(guid.ToString());
-                lblUsersOnline.Text = string.Format("{0} users online", server.users.Count);
+                UpdateUsersOnline(server.users.Count);
             }));
-
         }
 
         private void server_UserLogin(LoginPacket packet, Socket socket)
@@ -83,47 +109,29 @@ namespace Server
             Invoke(new MethodInvoker(delegate
             {
                 var user = new ListViewItem(packet.Username) { Name = server.GetUser(socket).Guid.ToString() };
-                user.SubItems.AddRange(new[] { ((IPEndPoint)socket.RemoteEndPoint).Address.ToString(), "Roomless" });
+                user.SubItems.Add(new ListViewItem.ListViewSubItem(user, ((IPEndPoint)socket.RemoteEndPoint).Address.ToString()) { Name = @"IP" });
+                user.SubItems.Add(new ListViewItem.ListViewSubItem(user, "Roomless") { Name = @"Room" });
+
                 lstViewUsers.Items.Add(user);
-                lblUsersOnline.Text = string.Format("{0} users online", server.users.Count);
+                UpdateUsersOnline(server.users.Count);
             }));
         }
+        #endregion
 
+        #region Form Event Handlers
         private void kickUserToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Invoke(new MethodInvoker(delegate
             {
-                if (lstViewUsers.SelectedItems.Count > 0) {
+                if (lstViewUsers.SelectedItems.Count <= 0) return;
 
-                    User user = server.GetUser(Guid.Parse(lstViewUsers.SelectedItems[0].Name));
+                User user = server.GetUser(Guid.Parse(lstViewUsers.SelectedItems[0].Name));
 
-                    lstViewUsers.Items.RemoveByKey(user.Guid.ToString());
+                lstViewUsers.Items.RemoveByKey(user.Guid.ToString());
 
-                    if (user.Room == null) {
-                        server.SendPacket(user.Socket,
-                                          PacketHelper.Serialize(new KickPacket(user.Guid, "You have been kicked.",
-                                                                                string.Format(
-                                                                                    "<<< {0} has been kicked >>>",
-                                                                                    user.Username))));
-                    } else {
-                        server.SendPacket(user.Room,
-                  PacketHelper.Serialize(new KickPacket(user.Guid, "You have been kicked.",
-                                                        string.Format(
-                                                            "<<< {0} has been kicked from {1} >>>",
-                                                            user.Username, user.Room.Name))));
-                    }
+                server.KickUser(user);
 
-                    server.users.Remove(user);
-                    user.Socket.Shutdown(SocketShutdown.Both);
-
-                    if (user.Room != null) {
-                        user.Room.Users.Remove(user);
-
-                        server.SendPacket(user.Room, PacketHelper.Serialize(new RefreshUsersPacket(user.Room.Users)));
-                    }
-
-                    lblUsersOnline.Text = string.Format("{0} users online", server.users.Count);
-                }
+                UpdateUsersOnline(server.users.Count);
             }));
         }
 
@@ -131,23 +139,15 @@ namespace Server
         {
             Invoke(new MethodInvoker(delegate
             {
-                if (lstViewUsers.SelectedItems.Count > 0) {
+                if (lstViewUsers.SelectedItems.Count <= 0) return;
 
-                    User user = server.GetUser(Guid.Parse(lstViewUsers.SelectedItems[0].Name));
+                User user = server.GetUser(Guid.Parse(lstViewUsers.SelectedItems[0].Name));
 
-                    lstViewUsers.Items.RemoveByKey(user.Guid.ToString());
+                lstViewUsers.Items.RemoveByKey(user.Guid.ToString());
 
-                    server.SendPacket(user.Socket, PacketHelper.Serialize(new BanPacket(user.Guid, "You have been banned.")));
+                server.BanUser(user);
 
-                    server.bans.Add(new Ban { IP = (((IPEndPoint)user.Socket.RemoteEndPoint).Address) });
-
-                    server.users.Remove(user);
-                    user.Socket.Shutdown(SocketShutdown.Both);
-
-                    user.Room.Users.Remove(user);
-
-                    lblUsersOnline.Text = string.Format("{0} users online", server.users.Count);
-                }
+                UpdateUsersOnline(server.users.Count);
             }));
         }
 
@@ -163,9 +163,10 @@ namespace Server
             server.Start();
         }
 
-        private void toolStripStatusLabel3_Click(object sender, EventArgs e)
+        private void btnConnectionStatus_DropDownOpening(object sender, EventArgs e)
         {
-
+            ToggleConnectionButtons(!server.Online);
         }
+        #endregion
     }
 }

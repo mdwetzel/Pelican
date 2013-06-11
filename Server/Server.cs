@@ -234,6 +234,8 @@ namespace Server
             foreach (var user in users) {
                 user.Socket.Shutdown(SocketShutdown.Both);
             }
+            
+            users.Clear();
 
             foreach (var room in rooms) {
                 room.Users.Clear();

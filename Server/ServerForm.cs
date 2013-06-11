@@ -156,6 +156,8 @@ namespace Server
             Invoke(new MethodInvoker(() => lstViewUsers.Items.Clear()));
 
             server.Stop();
+
+            UpdateUsersOnline(server.users.Count);
         }
 
         private void startServerToolStripMenuItem_Click(object sender, EventArgs e)
@@ -166,6 +168,17 @@ namespace Server
         private void btnConnectionStatus_DropDownOpening(object sender, EventArgs e)
         {
             ToggleConnectionButtons(!server.Online);
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            server.Stop();
+            Application.Exit();
+        }
+
+        private void configurationToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
         }
         #endregion
     }

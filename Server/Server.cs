@@ -234,7 +234,7 @@ namespace Server
             foreach (var user in users) {
                 user.Socket.Shutdown(SocketShutdown.Both);
             }
-            
+
             users.Clear();
 
             foreach (var room in rooms) {
@@ -252,7 +252,7 @@ namespace Server
 
             listenerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-            listenerSocket.Bind(new IPEndPoint(IPAddress.Loopback, 1000));
+            listenerSocket.Bind(new IPEndPoint(Configuration.IpAddress, Configuration.Port));
             listenerSocket.Listen(4);
 
             listenerSocket.BeginAccept(OnAccept, null);

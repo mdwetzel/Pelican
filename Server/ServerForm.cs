@@ -1,6 +1,7 @@
 ﻿#region Using
 using System;
 using System.Drawing;
+using System.Globalization;
 using System.Net;
 using System.Net.Sockets;
 using System.Windows.Forms;
@@ -87,7 +88,7 @@ namespace Server
         {
             Invoke(new MethodInvoker(delegate
             {
-                Text = string.Format("{0} | {1}", Resources.BaseName, Resources.Online);
+                Text = string.Format("{0} | {1} - Listening on Port {2}", Resources.BaseName, Resources.Online, Configuration.Port);
                 toolStripStatusLabel2.Text = Resources.Online;
                 btnConnectionStatus.Image = new Bitmap(@"Images/online.png");
 
@@ -178,7 +179,17 @@ namespace Server
 
         private void configurationToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            using (ConfigurationForm configurationForm = new ConfigurationForm()) {
+                if (configurationForm.ShowDialog() == DialogResult.OK) {
+                    Configuration.IpAddress = configurationForm.IpAddress;
+                    Configuration.Port = configurationForm.Port;
 
+                    Settings.Default.IpAddress = configurationForm.IpAddress.ToString();
+                    Settings.Default.Port = configurationForm.Port.ToString(CultureInfo.InvariantCulture);
+
+                    Settings.Default.Save();
+                }
+            }
         }
         #endregion
     }

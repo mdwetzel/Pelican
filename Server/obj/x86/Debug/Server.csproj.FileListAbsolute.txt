@@ -10,3 +10,5 @@ H:\Dropbox\Visual Studio\Pelican\Server\obj\x86\Debug\Server.csprojResolveAssemb
 H:\Dropbox\Visual Studio\Pelican\Server\obj\x86\Debug\Server.ServerForm.resources
 H:\Dropbox\Visual Studio\Pelican\Server\bin\Debug\Images\offline.png
 H:\Dropbox\Visual Studio\Pelican\Server\bin\Debug\Images\online.png
+H:\Dropbox\Visual Studio\Pelican\Server\obj\x86\Debug\Server.ConfigurationForm.resources
+H:\Dropbox\Visual Studio\Pelican\Server\bin\Debug\Server.exe.config

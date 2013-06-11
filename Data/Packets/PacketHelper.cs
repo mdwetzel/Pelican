@@ -1,10 +1,13 @@
-﻿using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
+﻿#region Using
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary; 
+#endregion
 
 namespace Data.Packets
 {
     public static class PacketHelper
     {
+        #region Methods
         public static byte[] Serialize(Packet packet)
         {
             using (MemoryStream memStream = new MemoryStream()) {
@@ -24,6 +27,7 @@ namespace Data.Packets
 
                 return tempPacket;
             }
-        }
+        } 
+        #endregion
     }
 }

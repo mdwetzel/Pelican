@@ -140,13 +140,13 @@ namespace Server
             Packet packet = PacketHelper.Deserialize(state.Buffer);
 
             if (packet is LoginPacket) {
-                if (UserLogin != null) UserLogin(packet as LoginPacket, state.workSocket);
+                if (UserLogin != null) UserLogin(packet as LoginPacket, state.WorkSocket);
             } else if (packet is CreateRoomPacket) {
                 if (CreateRoom != null) CreateRoom(packet as CreateRoomPacket);
             } else if (packet is ClientPackets.JoinRoomPacket) {
-                if (UserJoinRoom != null) UserJoinRoom(packet as ClientPackets.JoinRoomPacket, state.workSocket);
+                if (UserJoinRoom != null) UserJoinRoom(packet as ClientPackets.JoinRoomPacket, state.WorkSocket);
             } else if (packet is MessagePacket) {
-                if (UserMessage != null) UserMessage(packet as MessagePacket, state.workSocket);
+                if (UserMessage != null) UserMessage(packet as MessagePacket, state.WorkSocket);
             }
         }
         #endregion
@@ -155,15 +155,15 @@ namespace Server
         private void OnAccept(IAsyncResult ar)
         {
             try {
-                StateObject state = new StateObject { workSocket = listenerSocket.EndAccept(ar) };
+                StateObject state = new StateObject { WorkSocket = listenerSocket.EndAccept(ar) };
 
-                if (bans.Find(ban => (Equals(ban.IP, ((IPEndPoint)state.workSocket.RemoteEndPoint).Address))) != null) {
+                if (bans.Find(ban => (Equals(ban.IP, ((IPEndPoint)state.WorkSocket.RemoteEndPoint).Address))) != null) {
 
-                    SendPacket(state.workSocket, PacketHelper.Serialize(new BanNotificationPacket("You are banned.")));
+                    SendPacket(state.WorkSocket, PacketHelper.Serialize(new BanNotificationPacket("You are banned.")));
 
-                    state.workSocket.Shutdown(SocketShutdown.Both);
+                    state.WorkSocket.Shutdown(SocketShutdown.Both);
                 } else {
-                    state.workSocket.BeginReceive(state.Buffer, 0, StateObject.InitialBufferSize, SocketFlags.None, OnReceive, state);
+                    state.WorkSocket.BeginReceive(state.Buffer, 0, StateObject.InitialBufferSize, SocketFlags.None, OnReceive, state);
                 }
 
                 listenerSocket.BeginAccept(OnAccept, null);
@@ -177,7 +177,7 @@ namespace Server
         {
             StateObject state = (StateObject)ar.AsyncState;
             try {
-                int bytesReceived = state.workSocket.EndReceive(ar);
+                int bytesReceived = state.WorkSocket.EndReceive(ar);
 
                 if (bytesReceived > 0) {
                     if (bytesReceived == sizeof(int)) {
@@ -194,9 +194,9 @@ namespace Server
                         state.BytesReceived = 0;
                     }
 
-                    state.workSocket.BeginReceive(state.Buffer, 0, state.Buffer.Length, SocketFlags.None, OnReceive, state);
+                    state.WorkSocket.BeginReceive(state.Buffer, 0, state.Buffer.Length, SocketFlags.None, OnReceive, state);
                 } else {
-                    User user = GetUser(state.workSocket);
+                    User user = GetUser(state.WorkSocket);
                     if (user != null) {
                         UserDisconnected(user.Guid);
                     }
@@ -204,7 +204,7 @@ namespace Server
             } catch (SocketException ex) {
                 switch (ex.ErrorCode) {
                     case 10054:
-                        User user = GetUser(state.workSocket);
+                        User user = GetUser(state.WorkSocket);
                         if (user != null) {
                             UserDisconnected(user.Guid);
                         }

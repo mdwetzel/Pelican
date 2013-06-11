@@ -1,23 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿#region Using
 using System.Net.Sockets;
-using System.Text;
+#endregion
 
 namespace Data
 {
     public class StateObject
     {
-        public Socket workSocket = null;
-
+        #region Fields/Properties
+        public Socket WorkSocket { get; set; }
         public const int InitialBufferSize = sizeof(int);
-
         public int Length;
-
         public int BytesReceived { get; set; }
+        public byte[] Buffer = new byte[InitialBufferSize]; 
+        #endregion
 
-        public byte[] Buffer = new byte[InitialBufferSize];
-
+        #region Methods
         /// <summary>
         /// Resets the Buffer and BytesReceived to allow for a fresh packet read.
         /// </summary>
@@ -25,6 +22,7 @@ namespace Data
         {
             Buffer = new byte[StateObject.InitialBufferSize];
             BytesReceived = 0;
-        }
+        } 
+        #endregion
     }
 }

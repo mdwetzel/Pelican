@@ -98,7 +98,7 @@ namespace Client
         // Begin receiving server data on successful connection.
         private void Client_ConnectionEstablished(StateObject state)
         {
-            state.workSocket.BeginReceive(state.Buffer, 0, StateObject.InitialBufferSize, SocketFlags.None, OnReceive, state);
+            state.WorkSocket.BeginReceive(state.Buffer, 0, StateObject.InitialBufferSize, SocketFlags.None, OnReceive, state);
         }
 
         // Needed because the only GUIDs we should use should be created on the server. 
@@ -141,7 +141,7 @@ namespace Client
         {
             try {
                 StateObject state = (StateObject)ar.AsyncState;
-                int bytesReceived = state.workSocket.EndReceive(ar);
+                int bytesReceived = state.WorkSocket.EndReceive(ar);
 
                 if (bytesReceived > 0) {
                     // The upcoming packet's size. This is what we set the buffer size to. 
@@ -162,7 +162,7 @@ namespace Client
                     }
 
                     // If data's being received (bytesReceived != 0) then continue reading. 
-                    state.workSocket.BeginReceive(state.Buffer, 0, state.Buffer.Length, SocketFlags.None, OnReceive, state);
+                    state.WorkSocket.BeginReceive(state.Buffer, 0, state.Buffer.Length, SocketFlags.None, OnReceive, state);
                 } else {
                     // If bytesReceived == 0, then we've lost connection to the server.
                     // This is most likely a socket shutdown. 
@@ -182,14 +182,14 @@ namespace Client
         private void OnSend(IAsyncResult ar)
         {
             StateObject state = (StateObject)ar.AsyncState;
-            state.workSocket.EndSend(ar);
+            state.WorkSocket.EndSend(ar);
         }
 
         private void OnConnect(IAsyncResult ar)
         {
             try {
                 StateObject state = (StateObject)ar.AsyncState;
-                state.workSocket.EndConnect(ar);
+                state.WorkSocket.EndConnect(ar);
 
                 // We're connected, but we need to send our username to the server. 
                 SendPacket(PacketHelper.Serialize(new LoginPacket(User.Username)));
@@ -215,8 +215,8 @@ namespace Client
         private void SendPacket(byte[] buffer)
         {
             byte[] lengthPacket = BitConverter.GetBytes(buffer.Length);
-            sendState.workSocket.Send(lengthPacket);
-            sendState.workSocket.BeginSend(buffer, 0, buffer.Length, SocketFlags.None, OnSend, sendState);
+            sendState.WorkSocket.Send(lengthPacket);
+            sendState.WorkSocket.BeginSend(buffer, 0, buffer.Length, SocketFlags.None, OnSend, sendState);
         }
 
         /// <summary>
@@ -266,11 +266,11 @@ namespace Client
 
             StateObject state = new StateObject
             {
-                workSocket = User.Socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
+                WorkSocket = User.Socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
             };
 
-            sendState.workSocket = state.workSocket;
-            state.workSocket.BeginConnect(new IPEndPoint(Options.IpAddress, Options.Port), OnConnect, state);
+            sendState.WorkSocket = state.WorkSocket;
+            state.WorkSocket.BeginConnect(new IPEndPoint(Options.IpAddress, Options.Port), OnConnect, state);
         }
         #endregion
     }

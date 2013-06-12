@@ -64,6 +64,11 @@ namespace Server
         #endregion
 
         #region Server Event Handlers
+        private void ServerForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            server.SaveRooms();
+        }
+
         private void server_UserJoinRoom(JoinRoomPacket packet, Socket socket)
         {
             User user = server.GetUser(socket);

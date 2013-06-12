@@ -21,7 +21,7 @@ namespace Server
         private Socket listenerSocket;
         private readonly List<Ban> bans = new List<Ban>();
         public readonly List<User> users = new List<User>();
-        private readonly List<Room> rooms = new List<Room>();
+        private List<Room> rooms = new List<Room>();
         public bool Online { get; private set; }
         #endregion
 
@@ -68,7 +68,7 @@ namespace Server
             UserJoinRoom += Server_UserJoinRoom;
             UserMessage += Server_UserMessage;
 
-            rooms.Add(new Room { Name = "Markapolis", Description = "This is awesome.", Private = true });
+            LoadRooms();
         }
         #endregion
 
@@ -375,6 +375,16 @@ namespace Server
         public Room GetRoom(Guid guid)
         {
             return rooms.First(room => room.Guid == guid);
+        }
+
+        public void SaveRooms()
+        {
+            RoomsHelper.SerializeRooms(rooms, "rooms.xml");
+        }
+
+        private void LoadRooms()
+        {
+            rooms = RoomsHelper.DeserializeRooms("rooms.xml");
         }
         #endregion
     }

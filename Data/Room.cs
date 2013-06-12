@@ -1,6 +1,8 @@
 ﻿#region Using
 using System;
-using System.Collections.Generic; 
+using System.Collections.Generic;
+using System.Xml.Serialization;
+
 #endregion
 
 namespace Data
@@ -9,11 +11,13 @@ namespace Data
     public class Room
     {
         #region Fields/Properties
+        [XmlIgnore]
         public List<User> Users { get; private set; }
+        [XmlIgnore]
+        public Guid Guid { get; private set; } 
         public string Name { get; set; }
         public string Description { get; set; }
         public bool Private { get; set; }
-        public Guid Guid { get; private set; } 
         #endregion
 
         #region Constructors

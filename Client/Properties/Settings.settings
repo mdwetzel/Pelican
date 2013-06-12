@@ -9,7 +9,7 @@
       <Value Profile="(Default)">1000</Value>
     </Setting>
     <Setting Name="Username" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Default</Value>
+      <Value Profile="(Default)">Yoho</Value>
     </Setting>
   </Settings>
 </SettingsFile>

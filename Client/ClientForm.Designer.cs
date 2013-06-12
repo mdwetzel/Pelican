@@ -59,24 +59,24 @@
             // 
             // rchTxtChat
             // 
-            this.rchTxtChat.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.rchTxtChat.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.rchTxtChat.Location = new System.Drawing.Point(0, 3);
             this.rchTxtChat.Name = "rchTxtChat";
-            this.rchTxtChat.Size = new System.Drawing.Size(748, 468);
+            this.rchTxtChat.Size = new System.Drawing.Size(582, 294);
             this.rchTxtChat.TabIndex = 0;
             this.rchTxtChat.Text = "";
             // 
             // lstViewUsers
             // 
-            this.lstViewUsers.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.lstViewUsers.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lstViewUsers.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader5});
-            this.lstViewUsers.Location = new System.Drawing.Point(754, 0);
+            this.lstViewUsers.Location = new System.Drawing.Point(588, 0);
             this.lstViewUsers.Name = "lstViewUsers";
-            this.lstViewUsers.Size = new System.Drawing.Size(142, 471);
+            this.lstViewUsers.Size = new System.Drawing.Size(142, 297);
             this.lstViewUsers.TabIndex = 1;
             this.lstViewUsers.UseCompatibleStateImageBehavior = false;
             this.lstViewUsers.View = System.Windows.Forms.View.Details;
@@ -88,12 +88,15 @@
             // 
             // tabMain
             // 
+            this.tabMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tabMain.Controls.Add(this.tabPageRooms);
             this.tabMain.Controls.Add(this.tabPageRoom);
             this.tabMain.Location = new System.Drawing.Point(0, 26);
             this.tabMain.Name = "tabMain";
             this.tabMain.SelectedIndex = 0;
-            this.tabMain.Size = new System.Drawing.Size(904, 531);
+            this.tabMain.Size = new System.Drawing.Size(738, 357);
             this.tabMain.TabIndex = 4;
             // 
             // tabPageRooms
@@ -103,22 +106,27 @@
             this.tabPageRooms.Location = new System.Drawing.Point(4, 22);
             this.tabPageRooms.Name = "tabPageRooms";
             this.tabPageRooms.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageRooms.Size = new System.Drawing.Size(896, 505);
+            this.tabPageRooms.Size = new System.Drawing.Size(730, 331);
             this.tabPageRooms.TabIndex = 0;
             this.tabPageRooms.Text = "Chat Rooms";
             this.tabPageRooms.UseVisualStyleBackColor = true;
             // 
             // rchTxtLog
             // 
-            this.rchTxtLog.Location = new System.Drawing.Point(0, 409);
+            this.rchTxtLog.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.rchTxtLog.Location = new System.Drawing.Point(0, 235);
             this.rchTxtLog.Name = "rchTxtLog";
             this.rchTxtLog.ReadOnly = true;
-            this.rchTxtLog.Size = new System.Drawing.Size(896, 96);
+            this.rchTxtLog.Size = new System.Drawing.Size(730, 96);
             this.rchTxtLog.TabIndex = 6;
             this.rchTxtLog.Text = "";
             // 
             // lstViewRooms
             // 
+            this.lstViewRooms.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lstViewRooms.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader2,
@@ -127,7 +135,7 @@
             this.lstViewRooms.ContextMenuStrip = this.contextMenuStrip1;
             this.lstViewRooms.Location = new System.Drawing.Point(3, 3);
             this.lstViewRooms.Name = "lstViewRooms";
-            this.lstViewRooms.Size = new System.Drawing.Size(890, 400);
+            this.lstViewRooms.Size = new System.Drawing.Size(724, 226);
             this.lstViewRooms.TabIndex = 0;
             this.lstViewRooms.UseCompatibleStateImageBehavior = false;
             this.lstViewRooms.View = System.Windows.Forms.View.Details;
@@ -141,7 +149,7 @@
             // columnHeader2
             // 
             this.columnHeader2.Text = "Description";
-            this.columnHeader2.Width = 508;
+            this.columnHeader2.Width = 314;
             // 
             // columnHeader3
             // 
@@ -176,14 +184,15 @@
             this.tabPageRoom.Location = new System.Drawing.Point(4, 22);
             this.tabPageRoom.Name = "tabPageRoom";
             this.tabPageRoom.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageRoom.Size = new System.Drawing.Size(896, 505);
+            this.tabPageRoom.Size = new System.Drawing.Size(730, 331);
             this.tabPageRoom.TabIndex = 1;
             this.tabPageRoom.Text = "Room";
             this.tabPageRoom.UseVisualStyleBackColor = true;
             // 
             // btnSend
             // 
-            this.btnSend.Location = new System.Drawing.Point(754, 477);
+            this.btnSend.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSend.Location = new System.Drawing.Point(588, 303);
             this.btnSend.Name = "btnSend";
             this.btnSend.Size = new System.Drawing.Size(139, 23);
             this.btnSend.TabIndex = 5;
@@ -193,10 +202,12 @@
             // 
             // rchTxtInput
             // 
-            this.rchTxtInput.Location = new System.Drawing.Point(3, 476);
+            this.rchTxtInput.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.rchTxtInput.Location = new System.Drawing.Point(3, 302);
             this.rchTxtInput.Multiline = false;
             this.rchTxtInput.Name = "rchTxtInput";
-            this.rchTxtInput.Size = new System.Drawing.Size(745, 24);
+            this.rchTxtInput.Size = new System.Drawing.Size(579, 24);
             this.rchTxtInput.TabIndex = 4;
             this.rchTxtInput.Text = "";
             this.rchTxtInput.KeyDown += new System.Windows.Forms.KeyEventHandler(this.rchTxtInput_KeyDown);
@@ -208,7 +219,7 @@
             this.toolsToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(904, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(738, 24);
             this.menuStrip1.TabIndex = 5;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -248,7 +259,7 @@
             // optionsToolStripMenuItem
             // 
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.optionsToolStripMenuItem.Text = "Options";
             this.optionsToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
@@ -256,7 +267,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(904, 558);
+            this.ClientSize = new System.Drawing.Size(738, 384);
             this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.tabMain);
             this.MainMenuStrip = this.menuStrip1;

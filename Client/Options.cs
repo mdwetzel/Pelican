@@ -11,6 +11,7 @@ namespace Client
         #region Fields/Properties
         public static IPAddress IpAddress { get; set; }
         public static int Port { get; set; }
+        public static string Username { get; set; }
         #endregion
 
         #region Constructors
@@ -19,6 +20,7 @@ namespace Client
             // Defaults.
             IpAddress = IPAddress.Parse(Settings.Default.IPAddress);
             Port = int.Parse(Settings.Default.Port);
+            Username = Settings.Default.Username;
         }
         #endregion
     }

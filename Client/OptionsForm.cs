@@ -1,6 +1,5 @@
 ﻿#region Using
 using System;
-using System.Globalization;
 using System.Net;
 using System.Text;
 using System.Windows.Forms;
@@ -13,17 +12,22 @@ namespace Client
     public partial class OptionsForm : Form
     {
         #region Fields/Properties
-        private IPAddress ipAddress;
-        private int port;
-
-        public IPAddress IpAddress
+        public string IpAddress
         {
-            get { return ipAddress; }
+            get { return txtIpAddress.Text; }
+            private set { txtIpAddress.Text = value; }
         }
 
-        public int Port
+        public string Port
         {
-            get { return port; }
+            get { return txtPort.Text; }
+            private set { txtPort.Text = value; }
+        }
+
+        public string Username
+        {
+            get { return txtUsername.Text; }
+            private set { txtUsername.Text = value; }
         }
         #endregion
 
@@ -32,11 +36,11 @@ namespace Client
         {
             InitializeComponent();
 
-            ipAddress = IPAddress.Parse(Settings.Default.IPAddress);
-            port = int.Parse(Settings.Default.Port);
+            IpAddress = Settings.Default.IPAddress;
+            Port = Settings.Default.Port;
+            Username = Settings.Default.Username;
 
-            txtIpAddress.Text = ipAddress.ToString();
-            txtPort.Text = port.ToString(CultureInfo.InvariantCulture);
+            txtUsername.Select();
         }
         #endregion
 
@@ -44,6 +48,15 @@ namespace Client
         private void btnSave_Click(object sender, EventArgs e)
         {
             StringBuilder errors = new StringBuilder();
+
+            IPAddress ipAddress;
+            int port;
+
+            if (string.IsNullOrWhiteSpace(txtUsername.Text.Trim())) {
+                errors.Append("Please enter a valid username.");
+            } else if (txtUsername.Text.Trim().Length > 15) {
+                errors.Append("Usernames must be fewer than 15 characters.");
+            }
 
             if (!IPAddress.TryParse(txtIpAddress.Text, out ipAddress)) {
                 errors.Append("Please enter a valid ip address.\n");

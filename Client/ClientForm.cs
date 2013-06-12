@@ -1,6 +1,7 @@
 ﻿#region Using
 using System;
 using System.Globalization;
+using System.Net;
 using System.Windows.Forms;
 using Client.Properties;
 using Data;
@@ -279,11 +280,13 @@ namespace Client
             using (OptionsForm options = new OptionsForm()) {
                 if (options.ShowDialog() != DialogResult.OK) return;
 
-                Options.IpAddress = options.IpAddress;
-                Options.Port = options.Port;
+                Options.IpAddress = IPAddress.Parse(options.IpAddress);
+                Options.Port = int.Parse(options.Port);
+                Options.Username = options.Username.Trim();
 
-                Settings.Default.IPAddress = options.IpAddress.ToString();
+                Settings.Default.IPAddress = options.IpAddress;
                 Settings.Default.Port = options.Port.ToString(CultureInfo.InvariantCulture);
+                Settings.Default.Username = options.Username.Trim();
 
                 Settings.Default.Save();
             }

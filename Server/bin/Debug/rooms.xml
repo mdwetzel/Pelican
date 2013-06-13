@@ -5,7 +5,7 @@
     <Description>This is room is awesome.</Description>
     <Private>true</Private>
   </Room>
-    <Room>
+  <Room>
     <Name>Test Room 27</Name>
     <Description>This is a test room and you should test it.</Description>
     <Private>false</Private>

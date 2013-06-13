@@ -69,6 +69,7 @@
             this.Controls.Add(this.btnOk);
             this.Controls.Add(this.rchTxtMessage);
             this.Name = "BroadcastForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Broadcast";
             this.ResumeLayout(false);
 

@@ -35,7 +35,9 @@ namespace Client
             client.UserLeftRoom += client_UserLeftRoom;
             client.ConnectionEstablished += client_ConnectionEstablished;
             client.BanNotification += client_BanNotification;
+            client.Broadcast += client_Broadcast;
         }
+
         #endregion
 
         #region Methods
@@ -102,6 +104,11 @@ namespace Client
         #endregion
 
         #region Client Event Handlers
+        void client_Broadcast(BroadcastPacket packet)
+        {
+            Invoke(new MethodInvoker(() => MessageBox.Show(packet.Message, "Server Broadcast", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)));
+        }
+
         private void client_RoomMessage(RoomMessagePacket packet)
         {
             WriteToChatWindow(packet.Message);
@@ -112,11 +119,11 @@ namespace Client
             SwitchToTab(tabPageRoom);
 
             Invoke(new MethodInvoker(delegate
-                {
-                    foreach (var user in packet.Room.Users) {
-                        lstViewUsers.Items.Add(user.Username);
-                    }
-                }));
+            {
+                foreach (var user in packet.Room.Users) {
+                    lstViewUsers.Items.Add(user.Username);
+                }
+            }));
         }
 
         private void client_BanNotification(BanNotificationPacket packet)

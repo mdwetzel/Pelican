@@ -386,6 +386,15 @@ namespace Server
         {
             rooms = RoomsHelper.DeserializeRooms("rooms.xml");
         }
+
+        public void SendBroadcast(string text)
+        {
+            text = string.Format("<<< {0} >>>", text);
+
+            foreach (var user in users) {
+                SendPacket(user.Socket, PacketHelper.Serialize(new BroadcastPacket(text)));
+            }
+        }
         #endregion
     }
 }

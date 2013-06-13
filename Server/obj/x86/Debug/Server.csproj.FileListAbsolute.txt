@@ -12,3 +12,4 @@ H:\Dropbox\Visual Studio\Pelican\Server\bin\Debug\Images\offline.png
 H:\Dropbox\Visual Studio\Pelican\Server\bin\Debug\Images\online.png
 H:\Dropbox\Visual Studio\Pelican\Server\obj\x86\Debug\Server.ConfigurationForm.resources
 H:\Dropbox\Visual Studio\Pelican\Server\bin\Debug\Server.exe.config
+H:\Dropbox\Visual Studio\Pelican\Server\obj\x86\Debug\Server.BroadcastForm.resources

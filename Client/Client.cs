@@ -72,6 +72,10 @@ namespace Client
         public delegate void UserLeftRoomHandler(UserLeftRoomPacket packet);
 
         public event UserLeftRoomHandler UserLeftRoom;
+
+        public delegate void BroadcastHandler(BroadcastPacket packet);
+
+        public event BroadcastHandler Broadcast;
         #endregion
 
         #region Constructors
@@ -83,10 +87,11 @@ namespace Client
             UpdateUserGuid += Client_UpdateUserGuid;
             ConnectionEstablished += Client_ConnectionEstablished;
             JoinRoom += Client_JoinRoom;
-
+ 
             // Connect to the server on startup. 
             Connect();
         }
+
         #endregion
 
         #region Client Event Handlers
@@ -132,6 +137,8 @@ namespace Client
                 if (UserJoinedRoom != null) UserJoinedRoom(packet as UserJoinedRoomPacket);
             } else if (packet is UserLeftRoomPacket) {
                 if (UserLeftRoom != null) UserLeftRoom(packet as UserLeftRoomPacket);
+            } else if (packet is BroadcastPacket) {
+                if (Broadcast != null) Broadcast(packet as BroadcastPacket);
             }
         }
         #endregion

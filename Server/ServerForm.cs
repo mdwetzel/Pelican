@@ -196,6 +196,15 @@ namespace Server
                 }
             }
         }
+
+        private void sendBroadcastToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (BroadcastForm broadcastForm = new BroadcastForm()) {
+                if (broadcastForm.ShowDialog() == DialogResult.OK) {
+                    server.SendBroadcast(broadcastForm.Message);
+                }
+            }
+        }
         #endregion
     }
 }

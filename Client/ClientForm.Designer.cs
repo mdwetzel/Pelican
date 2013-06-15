@@ -59,11 +59,10 @@
             // 
             // rchTxtChat
             // 
-            this.rchTxtChat.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.rchTxtChat.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.rchTxtChat.Enabled = false;
-
             this.rchTxtChat.Location = new System.Drawing.Point(0, 3);
             this.rchTxtChat.Name = "rchTxtChat";
             this.rchTxtChat.Size = new System.Drawing.Size(582, 294);
@@ -72,12 +71,11 @@
             // 
             // lstViewUsers
             // 
-            this.lstViewUsers.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lstViewUsers.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.lstViewUsers.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader5});
             this.lstViewUsers.Enabled = false;
-
             this.lstViewUsers.Location = new System.Drawing.Point(588, 0);
             this.lstViewUsers.Name = "lstViewUsers";
             this.lstViewUsers.Size = new System.Drawing.Size(142, 297);
@@ -92,9 +90,9 @@
             // 
             // tabMain
             // 
-            this.tabMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.tabMain.Controls.Add(this.tabPageRooms);
             this.tabMain.Controls.Add(this.tabPageRoom);
             this.tabMain.Location = new System.Drawing.Point(0, 26);
@@ -117,8 +115,8 @@
             // 
             // rchTxtLog
             // 
-            this.rchTxtLog.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.rchTxtLog.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.rchTxtLog.Location = new System.Drawing.Point(0, 235);
             this.rchTxtLog.Name = "rchTxtLog";
             this.rchTxtLog.ReadOnly = true;
@@ -128,9 +126,9 @@
             // 
             // lstViewRooms
             // 
-            this.lstViewRooms.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lstViewRooms.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.lstViewRooms.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader2,
@@ -147,7 +145,7 @@
             // 
             // columnHeader1
             // 
-            this.columnHeader1.Text = "Name";
+            this.columnHeader1.Text = "RoomName";
             this.columnHeader1.Width = 244;
             // 
             // columnHeader2
@@ -170,12 +168,12 @@
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.createRoomToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(144, 26);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(153, 48);
             // 
             // createRoomToolStripMenuItem
             // 
             this.createRoomToolStripMenuItem.Name = "createRoomToolStripMenuItem";
-            this.createRoomToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
+            this.createRoomToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.createRoomToolStripMenuItem.Text = "Create Room";
             this.createRoomToolStripMenuItem.Click += new System.EventHandler(this.createRoomToolStripMenuItem_Click);
             // 
@@ -207,10 +205,9 @@
             // 
             // rchTxtInput
             // 
-            this.rchTxtInput.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.rchTxtInput.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.rchTxtInput.Enabled = false;
-
             this.rchTxtInput.Location = new System.Drawing.Point(3, 302);
             this.rchTxtInput.Multiline = false;
             this.rchTxtInput.Name = "rchTxtInput";
@@ -266,7 +263,7 @@
             // optionsToolStripMenuItem
             // 
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.optionsToolStripMenuItem.Text = "Options";
             this.optionsToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 

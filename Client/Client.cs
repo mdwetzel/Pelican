@@ -248,7 +248,7 @@ namespace Client
         /// <param name="newRoom">The new room to create.</param>
         public void CreateRoom(NewRoom newRoom)
         {
-            CreateRoomPacket packet = new CreateRoomPacket(newRoom.Name, newRoom.Description);
+            CreateRoomPacket packet = new CreateRoomPacket(newRoom.Name, newRoom.Description, newRoom.RoomPassword, newRoom.AdminPassword);
 
             SendPacket(PacketHelper.Serialize(packet));
         }
@@ -270,8 +270,7 @@ namespace Client
         {
             if (User.Socket != null && User.Socket.Connected) return;
 
-            StateObject state = new StateObject
-            {
+            StateObject state = new StateObject {
                 WorkSocket = User.Socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
             };
 

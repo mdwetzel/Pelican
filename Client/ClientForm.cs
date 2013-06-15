@@ -287,14 +287,13 @@ namespace Client
             e.Handled = true;
         }
 
-
         // TODO
         private void createRoomToolStripMenuItem_Click(object sender, EventArgs e)
         {
             using (CreateRoom createRoom = new CreateRoom()) {
                 if (createRoom.ShowDialog() != DialogResult.OK) return;
 
-                client.CreateRoom(new NewRoom());
+                client.CreateRoom(new NewRoom(createRoom.RoomName, createRoom.Description, createRoom.AdminPassword, createRoom.RoomPassword));
             }
         }
 

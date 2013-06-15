@@ -30,7 +30,7 @@ namespace Server
 
         public delegate void UserLoginHandler(LoginPacket packet, Socket socket);
 
-        public delegate void CreateRoomHandler(CreateRoomPacket packet);
+        public delegate void CreateRoomHandler(CreateRoomPacket packet, Socket socket);
 
         public event CreateRoomHandler CreateRoom;
 
@@ -67,12 +67,23 @@ namespace Server
             UserDisconnected += Server_UserDisconnected;
             UserJoinRoom += Server_UserJoinRoom;
             UserMessage += Server_UserMessage;
+            CreateRoom += Server_CreateRoom;
 
             LoadRooms();
         }
+
         #endregion
 
         #region Server Event Handlers
+        private void Server_CreateRoom(CreateRoomPacket packet, Socket socket)
+        {
+            var room = new Room { Description = packet.Description, Name = packet.Name, RoomPassword = packet.RoomPassword, AdminPassword = packet.AdminPassword };
+
+            rooms.Add(room);
+
+            SendPacket(socket, PacketHelper.Serialize(new UpdateRoomsPacket(rooms)));
+        }
+
         private void Server_UserMessage(MessagePacket packet, Socket socket)
         {
             User fromUser = GetUser(socket);
@@ -142,7 +153,7 @@ namespace Server
             if (packet is LoginPacket) {
                 if (UserLogin != null) UserLogin(packet as LoginPacket, state.WorkSocket);
             } else if (packet is CreateRoomPacket) {
-                if (CreateRoom != null) CreateRoom(packet as CreateRoomPacket);
+                if (CreateRoom != null) CreateRoom(packet as CreateRoomPacket, state.WorkSocket);
             } else if (packet is ClientPackets.JoinRoomPacket) {
                 if (UserJoinRoom != null) UserJoinRoom(packet as ClientPackets.JoinRoomPacket, state.WorkSocket);
             } else if (packet is MessagePacket) {

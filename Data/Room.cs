@@ -14,9 +14,11 @@ namespace Data
         [XmlIgnore]
         public List<User> Users { get; private set; }
         [XmlIgnore]
-        public Guid Guid { get; private set; } 
+        public Guid Guid { get; private set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public string RoomPassword { get; set; }
+        public string AdminPassword { get; set; }
         public bool Private { get; set; }
         #endregion
 
@@ -25,7 +27,7 @@ namespace Data
         {
             Users = new List<User>();
             Guid = Guid.NewGuid();
-        } 
+        }
         #endregion
     }
 }

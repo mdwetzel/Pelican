@@ -3,3 +3,8 @@ H:\Dropbox\Visual Studio\Pelican\Data\bin\Debug\Data.pdb
 H:\Dropbox\Visual Studio\Pelican\Data\obj\Debug\Data.dll
 H:\Dropbox\Visual Studio\Pelican\Data\obj\Debug\Data.pdb
 H:\Dropbox\Visual Studio\Pelican\Data\obj\Debug\Data.csprojResolveAssemblyReference.cache
+F:\Dropbox\Visual Studio\Pelican\Data\bin\Debug\Data.dll
+F:\Dropbox\Visual Studio\Pelican\Data\bin\Debug\Data.pdb
+F:\Dropbox\Visual Studio\Pelican\Data\obj\Debug\Data.csprojResolveAssemblyReference.cache
+F:\Dropbox\Visual Studio\Pelican\Data\obj\Debug\Data.dll
+F:\Dropbox\Visual Studio\Pelican\Data\obj\Debug\Data.pdb

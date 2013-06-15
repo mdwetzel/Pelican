@@ -11,3 +11,16 @@ H:\Dropbox\Visual Studio\Pelican\Client\obj\x86\Debug\Client.CreateRoom.resource
 H:\Dropbox\Visual Studio\Pelican\Client\obj\x86\Debug\Client.ClientForm.resources
 H:\Dropbox\Visual Studio\Pelican\Client\obj\x86\Debug\Client.OptionsForm.resources
 H:\Dropbox\Visual Studio\Pelican\Client\bin\Debug\Client.exe.config
+F:\Dropbox\Visual Studio\Pelican\Client\bin\Debug\Client.exe.config
+F:\Dropbox\Visual Studio\Pelican\Client\obj\x86\Debug\Client.exe
+F:\Dropbox\Visual Studio\Pelican\Client\obj\x86\Debug\Client.pdb
+F:\Dropbox\Visual Studio\Pelican\Client\bin\Debug\Client.exe
+F:\Dropbox\Visual Studio\Pelican\Client\bin\Debug\Client.pdb
+F:\Dropbox\Visual Studio\Pelican\Client\bin\Debug\Data.dll
+F:\Dropbox\Visual Studio\Pelican\Client\bin\Debug\Data.pdb
+F:\Dropbox\Visual Studio\Pelican\Client\obj\x86\Debug\Client.csprojResolveAssemblyReference.cache
+F:\Dropbox\Visual Studio\Pelican\Client\obj\x86\Debug\Client.CreateRoom.resources
+F:\Dropbox\Visual Studio\Pelican\Client\obj\x86\Debug\Client.ClientForm.resources
+F:\Dropbox\Visual Studio\Pelican\Client\obj\x86\Debug\Client.OptionsForm.resources
+F:\Dropbox\Visual Studio\Pelican\Client\obj\x86\Debug\Client.Properties.Resources.resources
+F:\Dropbox\Visual Studio\Pelican\Client\obj\x86\Debug\Client.csproj.GenerateResource.Cache

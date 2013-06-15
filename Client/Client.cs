@@ -87,7 +87,6 @@ namespace Client
             UpdateUserGuid += Client_UpdateUserGuid;
             ConnectionEstablished += Client_ConnectionEstablished;
             JoinRoom += Client_JoinRoom;
- 
             // Connect to the server on startup. 
             Connect();
         }

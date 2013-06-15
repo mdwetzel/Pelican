@@ -41,6 +41,22 @@ namespace Client
         #endregion
 
         #region Methods
+        private void ClearListViews()
+        {
+            lstViewRooms.Items.Clear();
+            lstViewUsers.Items.Clear();
+        }
+
+        private void ClearRoomChat()
+        {
+            Invoke(new MethodInvoker(() => rchTxtChat.Clear()));
+        }
+
+        private void ToggleRoomsTab(bool enabled)
+        {
+            Invoke(new MethodInvoker(() => rchTxtChat.Enabled = rchTxtInput.Enabled = btnSend.Enabled = lstViewUsers.Enabled = enabled));
+        }
+
         private void WriteToChatWindow(string message)
         {
             Invoke(
@@ -116,6 +132,8 @@ namespace Client
 
         private void client_JoinRoom(JoinRoomPacket packet)
         {
+            ToggleRoomsTab(true);
+
             SwitchToTab(tabPageRoom);
 
             Invoke(new MethodInvoker(delegate
@@ -193,6 +211,12 @@ namespace Client
 
                     client.User.Socket = null;
 
+                    ClearListViews();
+
+                    ClearRoomChat();
+
+                    ToggleRoomsTab(false);
+
                     WriteToLog(Resources.ConnectionLost);
                 }));
         }
@@ -226,6 +250,10 @@ namespace Client
 
                     Text = string.Format("{0} | {1}", Resources.BaseName, Resources.Connected);
                     SwitchToTab(tabPageRooms);
+
+                    ClearListViews();
+
+                    ClearRoomChat();
 
                     WriteToLog(Resources.ConnectionLost);
                 }));

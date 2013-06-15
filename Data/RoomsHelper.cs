@@ -1,7 +1,7 @@
 ﻿#region Using
 using System.Collections.Generic;
 using System.IO;
-using System.Xml.Serialization; 
+using System.Xml.Serialization;
 #endregion
 
 namespace Data
@@ -11,17 +11,23 @@ namespace Data
         #region Methods
         public static void SerializeRooms(List<Room> rooms, string filename)
         {
-            XmlSerializer serializer = new XmlSerializer(typeof(List<Room>));
+            using (var writer = new StreamWriter(filename)) {
+                XmlSerializer serializer = new XmlSerializer(typeof(List<Room>));
 
-            serializer.Serialize(new StreamWriter(filename), rooms);
+                serializer.Serialize(writer, rooms);
+
+                writer.Close();
+            }
         }
 
         public static List<Room> DeserializeRooms(string filename)
         {
-            XmlSerializer serializer = new XmlSerializer(typeof(List<Room>));
+            using (StreamReader reader = new StreamReader(filename)) {
+                XmlSerializer serializer = new XmlSerializer(typeof(List<Room>));
 
-            return (List<Room>)serializer.Deserialize(new StreamReader(filename));
-        } 
+                return (List<Room>)serializer.Deserialize(reader);
+            }
+        }
         #endregion
     }
 }

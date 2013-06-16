@@ -30,11 +30,13 @@ namespace Server
             server.ServerOnline += server_ServerOnline;
             server.ServerOffline += server_ServerOffline;
             server.UserJoinRoom += server_UserJoinRoom;
+            server.RoomCreated += server_RoomCreated;
             lblUsersOnline.Alignment = ToolStripItemAlignment.Right;
 
             if (!IsHandleCreated) {
                 CreateHandle();
                 server.Start();
+                server.LoadRooms();
             }
         }
         #endregion
@@ -64,6 +66,17 @@ namespace Server
         #endregion
 
         #region Server Event Handlers
+        private void server_RoomCreated(Room room)
+        {
+            Invoke(new MethodInvoker(delegate
+            {
+                var item = new ListViewItem(room.Name) { Name = room.Guid.ToString() };
+                item.SubItems.Add(new ListViewItem.ListViewSubItem(item, room.Description) { Name = @"Description" });
+                item.SubItems.Add(new ListViewItem.ListViewSubItem(item, room.Users.Count.ToString(CultureInfo.InvariantCulture)) { Name = @"Count" });
+                lstViewRooms.Items.Add(item);
+            }));
+        }
+
         private void ServerForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             server.SaveRooms();
@@ -106,7 +119,7 @@ namespace Server
             Invoke(new MethodInvoker(delegate
             {
                 lstViewUsers.Items.RemoveByKey(guid.ToString());
-                UpdateUsersOnline(server.users.Count);
+                UpdateUsersOnline(server.Users.Count);
             }));
         }
 
@@ -119,12 +132,28 @@ namespace Server
                 user.SubItems.Add(new ListViewItem.ListViewSubItem(user, "Roomless") { Name = @"Room" });
 
                 lstViewUsers.Items.Add(user);
-                UpdateUsersOnline(server.users.Count);
+                UpdateUsersOnline(server.Users.Count);
             }));
         }
         #endregion
 
         #region Form Event Handlers
+        private void kickRoomUsersToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (lstViewRooms.SelectedItems.Count > 0) {
+                server.KickUsers(Guid.Parse(lstViewRooms.SelectedItems[0].Name));
+            }
+        }
+
+        private void closeRoomToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (lstViewRooms.SelectedItems.Count > 0) {
+                server.CloseRoom(Guid.Parse(lstViewRooms.SelectedItems[0].Name));
+
+                lstViewRooms.SelectedItems[0].Remove();
+            }
+        }
+
         private void kickUserToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Invoke(new MethodInvoker(delegate
@@ -137,7 +166,7 @@ namespace Server
 
                 server.KickUser(user);
 
-                UpdateUsersOnline(server.users.Count);
+                UpdateUsersOnline(server.Users.Count);
             }));
         }
 
@@ -153,7 +182,7 @@ namespace Server
 
                 server.BanUser(user);
 
-                UpdateUsersOnline(server.users.Count);
+                UpdateUsersOnline(server.Users.Count);
             }));
         }
 
@@ -163,7 +192,7 @@ namespace Server
 
             server.Stop();
 
-            UpdateUsersOnline(server.users.Count);
+            UpdateUsersOnline(server.Users.Count);
         }
 
         private void startServerToolStripMenuItem_Click(object sender, EventArgs e)

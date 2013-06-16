@@ -1,6 +1,5 @@
 ﻿#region Using
 using System;
-using System.Net;
 using System.Text;
 using System.Windows.Forms;
 #endregion
@@ -35,6 +34,8 @@ namespace Client
         public CreateRoom()
         {
             InitializeComponent();
+
+            chkRoomPassword.Checked = false;
         }
         #endregion
 
@@ -90,6 +91,11 @@ namespace Client
         private void btnCancel_Click(object sender, EventArgs e)
         {
             DialogResult = DialogResult.Cancel;
+        }
+
+        private void chkRoomPassword_CheckedChanged(object sender, EventArgs e)
+        {
+            txtRoomPassword.Enabled = chkRoomPassword.Checked;
         }
         #endregion
     }

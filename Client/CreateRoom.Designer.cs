@@ -1,4 +1,6 @@
-﻿namespace Client
+﻿using System.Windows.Forms;
+
+namespace Client
 {
     partial class CreateRoom
     {
@@ -58,7 +60,7 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(12, 15);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(35, 13);
+            this.label1.Size = new System.Drawing.Size(63, 13);
             this.label1.TabIndex = 3;
             this.label1.Text = "RoomName";
             // 
@@ -107,12 +109,15 @@
             // chkRoomPassword
             // 
             this.chkRoomPassword.AutoSize = true;
+            this.chkRoomPassword.Checked = true;
+            this.chkRoomPassword.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkRoomPassword.Location = new System.Drawing.Point(15, 94);
             this.chkRoomPassword.Name = "chkRoomPassword";
             this.chkRoomPassword.Size = new System.Drawing.Size(103, 17);
             this.chkRoomPassword.TabIndex = 4;
             this.chkRoomPassword.Text = "Room Password";
             this.chkRoomPassword.UseVisualStyleBackColor = true;
+            this.chkRoomPassword.CheckedChanged += new System.EventHandler(this.chkRoomPassword_CheckedChanged);
             // 
             // btnCancel
             // 
@@ -139,6 +144,11 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.txtDescription);
             this.Controls.Add(this.txtRoomName);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            this.Name = "CreateRoom";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Create Room";
             this.ResumeLayout(false);
             this.PerformLayout();

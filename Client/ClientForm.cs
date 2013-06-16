@@ -36,6 +36,7 @@ namespace Client
             client.ConnectionEstablished += client_ConnectionEstablished;
             client.BanNotification += client_BanNotification;
             client.Broadcast += client_Broadcast;
+            client.CloseRoom += client_CloseRoom;
         }
 
         #endregion
@@ -43,8 +44,11 @@ namespace Client
         #region Methods
         private void ClearListViews()
         {
-            lstViewRooms.Items.Clear();
-            lstViewUsers.Items.Clear();
+            Invoke(new MethodInvoker(delegate
+            {
+                lstViewRooms.Items.Clear();
+                lstViewUsers.Items.Clear();
+            }));
         }
 
         private void ClearRoomChat()
@@ -52,7 +56,7 @@ namespace Client
             Invoke(new MethodInvoker(() => rchTxtChat.Clear()));
         }
 
-        private void ToggleRoomsTab(bool enabled)
+        private void ToggleRoomTab(bool enabled)
         {
             Invoke(new MethodInvoker(() => rchTxtChat.Enabled = rchTxtInput.Enabled = btnSend.Enabled = lstViewUsers.Enabled = enabled));
         }
@@ -120,9 +124,20 @@ namespace Client
         #endregion
 
         #region Client Event Handlers
-        void client_Broadcast(BroadcastPacket packet)
+        private void client_CloseRoom(CloseRoomPacket packet)
         {
-            Invoke(new MethodInvoker(() => MessageBox.Show(packet.Message, "Server Broadcast", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)));
+            WriteToLog(packet.Message);
+
+            ClearRoomChat();
+
+            ToggleRoomTab(false);
+
+            SwitchToTab(tabPageRooms);
+        }
+
+        private void client_Broadcast(BroadcastPacket packet)
+        {
+            Invoke(new MethodInvoker(() => MessageBox.Show(packet.Message, @"Server Broadcast", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)));
         }
 
         private void client_RoomMessage(RoomMessagePacket packet)
@@ -132,7 +147,7 @@ namespace Client
 
         private void client_JoinRoom(JoinRoomPacket packet)
         {
-            ToggleRoomsTab(true);
+            ToggleRoomTab(true);
 
             SwitchToTab(tabPageRoom);
 
@@ -215,7 +230,7 @@ namespace Client
 
                     ClearRoomChat();
 
-                    ToggleRoomsTab(false);
+                    ToggleRoomTab(false);
 
                     WriteToLog(Resources.ConnectionLost);
                 }));

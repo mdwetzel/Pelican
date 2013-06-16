@@ -76,6 +76,10 @@ namespace Client
         public delegate void BroadcastHandler(BroadcastPacket packet);
 
         public event BroadcastHandler Broadcast;
+
+        public delegate void CloseRoomHandler(CloseRoomPacket packet);
+
+        public event CloseRoomHandler CloseRoom;
         #endregion
 
         #region Constructors
@@ -87,6 +91,7 @@ namespace Client
             UpdateUserGuid += Client_UpdateUserGuid;
             ConnectionEstablished += Client_ConnectionEstablished;
             JoinRoom += Client_JoinRoom;
+            CloseRoom += Client_CloseRoom;
             // Connect to the server on startup. 
             Connect();
         }
@@ -94,6 +99,11 @@ namespace Client
         #endregion
 
         #region Client Event Handlers
+        private void Client_CloseRoom(CloseRoomPacket packet)
+        {
+            User.Room = null;
+        }
+
         private void Client_JoinRoom(Data.Packets.Server.JoinRoomPacket packet)
         {
             User.Room = packet.Room;
@@ -138,6 +148,8 @@ namespace Client
                 if (UserLeftRoom != null) UserLeftRoom(packet as UserLeftRoomPacket);
             } else if (packet is BroadcastPacket) {
                 if (Broadcast != null) Broadcast(packet as BroadcastPacket);
+            } else if (packet is CloseRoomPacket) {
+                if (CloseRoom != null) CloseRoom(packet as CloseRoomPacket);
             }
         }
         #endregion
@@ -260,7 +272,7 @@ namespace Client
         /// <param name="room">The room to send the message to.</param>
         public void SendMessage(string message, Room room)
         {
-            SendPacket(PacketHelper.Serialize(new MessagePacket(message, room)));
+            if (room != null) SendPacket(PacketHelper.Serialize(new MessagePacket(message, room)));
         }
 
         /// <summary>

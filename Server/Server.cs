@@ -20,9 +20,11 @@ namespace Server
         #region Fields/Properties
         private Socket listenerSocket;
         private readonly List<Ban> bans = new List<Ban>();
-        public readonly List<User> users = new List<User>();
+        private readonly List<User> users = new List<User>();
         private List<Room> rooms = new List<Room>();
         public bool Online { get; private set; }
+
+        public List<User> Users { get { return users; } }
         #endregion
 
         #region Delegates/Events
@@ -57,6 +59,10 @@ namespace Server
         public event UserMessageHandler UserMessage;
 
         public event ServerOfflineHandler ServerOffline;
+
+        public delegate void RoomCreatedHandler(Room room);
+
+        public event RoomCreatedHandler RoomCreated;
         #endregion
 
         #region Constructors
@@ -69,7 +75,7 @@ namespace Server
             UserMessage += Server_UserMessage;
             CreateRoom += Server_CreateRoom;
 
-            LoadRooms();
+            //LoadRooms();
         }
 
         #endregion
@@ -333,6 +339,16 @@ namespace Server
             RemoveUserFromRoom(user);
         }
 
+        public void KickUsers(Guid guid)
+        {
+            var room = GetRoom(guid);
+            room.Users.ForEach(user => {
+                SendPacket(room, PacketHelper.Serialize(new KickPacket(user.Guid, Resources.KickedMessage, null)));
+                DisconnectUser(user);
+                RemoveUserFromRoom(user);
+            });
+        }
+
         private void SendPacket(Socket socket, byte[] buffer)
         {
             byte[] lengthPacket = BitConverter.GetBytes(buffer.Length);
@@ -393,9 +409,13 @@ namespace Server
             RoomsHelper.SerializeRooms(rooms, "rooms.xml");
         }
 
-        private void LoadRooms()
+        public void LoadRooms()
         {
             rooms = RoomsHelper.DeserializeRooms("rooms.xml");
+
+            foreach (var room in rooms) {
+                if (RoomCreated != null) RoomCreated(room);
+            }
         }
 
         public void SendBroadcast(string text)
@@ -405,6 +425,22 @@ namespace Server
             foreach (var user in users) {
                 SendPacket(user.Socket, PacketHelper.Serialize(new BroadcastPacket(text)));
             }
+        }
+
+        public void CloseRoom(Guid guid)
+        {
+            Room room = GetRoom(guid);
+
+            room.Users.ForEach(x => SendPacket(room, PacketHelper.Serialize(new CloseRoomPacket(string.Format("{0} has been closed by an administrator.", room.Name)))));
+
+
+
+            room.Users.ForEach(x => x.Room = null);
+            room.Users.Clear();
+
+            rooms.Remove(room);
+
+            users.ForEach(x => SendPacket(x.Socket, PacketHelper.Serialize(new UpdateRoomsPacket(rooms))));
         }
         #endregion
     }

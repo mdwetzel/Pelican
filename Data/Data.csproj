@@ -46,6 +46,7 @@
     <Compile Include="Packets\Client\JoinRoomPacket.cs" />
     <Compile Include="Packets\NewRoom.cs" />
     <Compile Include="Packets\Server\BroadcastPacket.cs" />
+    <Compile Include="Packets\Server\CloseRoomPacket.cs" />
     <Compile Include="Packets\Server\KickPacket.cs" />
     <Compile Include="Packets\Client\LoginPacket.cs" />
     <Compile Include="Packets\Client\MessagePacket.cs" />

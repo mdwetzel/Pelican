@@ -339,11 +339,11 @@ namespace Server
             RemoveUserFromRoom(user);
         }
 
-        public void KickUsers(Guid guid)
+        public void KickUsers(Guid guid, string reason)
         {
             var room = GetRoom(guid);
             room.Users.ForEach(user => {
-                SendPacket(room, PacketHelper.Serialize(new KickPacket(user.Guid, Resources.KickedMessage, null)));
+                SendPacket(room, PacketHelper.Serialize(new KickPacket(user.Guid, string.Format("{0} Reason: {1}", Resources.KickedMessage, reason), null)));
                 DisconnectUser(user);
                 RemoveUserFromRoom(user);
             });
@@ -427,11 +427,11 @@ namespace Server
             }
         }
 
-        public void CloseRoom(Guid guid)
+        public void CloseRoom(Guid guid, string message)
         {
             Room room = GetRoom(guid);
 
-            room.Users.ForEach(x => SendPacket(room, PacketHelper.Serialize(new CloseRoomPacket(string.Format("{0} has been closed by an administrator.", room.Name)))));
+            room.Users.ForEach(x => SendPacket(room, PacketHelper.Serialize(new CloseRoomPacket(string.Format("{0} has been closed by an administrator. Reason: {1}", room.Name, message)))));
 
 
 

@@ -138,19 +138,27 @@ namespace Server
         #endregion
 
         #region Form Event Handlers
+
         private void kickRoomUsersToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (lstViewRooms.SelectedItems.Count > 0) {
-                server.KickUsers(Guid.Parse(lstViewRooms.SelectedItems[0].Name));
+            using (CustomMessage customMessage = new CustomMessage()) {
+                if (customMessage.ShowDialog() == DialogResult.OK) {
+                    if (lstViewRooms.SelectedItems.Count > 0) {
+                        server.KickUsers(Guid.Parse(lstViewRooms.SelectedItems[0].Name), customMessage.Message);
+                    }
+                }
             }
         }
 
         private void closeRoomToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (lstViewRooms.SelectedItems.Count > 0) {
-                server.CloseRoom(Guid.Parse(lstViewRooms.SelectedItems[0].Name));
-
-                lstViewRooms.SelectedItems[0].Remove();
+            using (CustomMessage customMessage = new CustomMessage()) {
+                if (customMessage.ShowDialog() == DialogResult.OK) {
+                    if (lstViewRooms.SelectedItems.Count > 0) {
+                        server.CloseRoom(Guid.Parse(lstViewRooms.SelectedItems[0].Name), customMessage.Message);
+                        lstViewRooms.SelectedItems[0].Remove();
+                    }
+                }
             }
         }
 
